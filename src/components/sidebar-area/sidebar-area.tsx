@@ -1,34 +1,38 @@
-import { Button } from '@/components/ui/button'
-import { LoaderCircle, PlusIcon } from 'lucide-react'
-import { AppSidebar } from '@/components/sidebar-area/app-sidebar'
-import { Sidebar } from '@/components/ui/sidebar'
 import { useAgentContext } from '@/app/[agentId]/context/agent-context'
-import { useCreateAgent } from '../hooks/use-create-agent'
-import { useQueryClient } from '@tanstack/react-query'
-import { USE_AGENTS_KEY, useAgents } from '../hooks/use-agents'
-import { StatusCircle } from '../ui/status-circle'
-import { useIsConnected } from '../hooks/use-is-connected'
-import { useEffect, useMemo } from 'react'
-import { AgentState } from '@letta-ai/letta-client/api'
+import { AppSidebar } from '@/components/sidebar-area/app-sidebar'
+import { Button } from '@/components/ui/button'
+import { Sidebar } from '@/components/ui/sidebar'
 import {
   Tooltip,
-  TooltipTrigger,
-  TooltipContent
+  TooltipContent,
+  TooltipTrigger
 } from '@/components/ui/tooltip'
-import EditAgentForm from './edit-agent-form'
-import { AgentDialog } from '../ui/agent-dialog'
-import { DialogType, useDialogDetails } from '../ui/agent-dialog'
+import { AgentState } from '@letta-ai/letta-client/api'
+import { useQueryClient } from '@tanstack/react-query'
+import { LoaderCircle, PlusIcon } from 'lucide-react'
+import { useEffect, useMemo } from 'react'
+import { useDeleteAgent } from '@/components/hooks/use-agent-state'
+import { USE_AGENTS_KEY, useAgents } from '@/components/hooks/use-agents'
+import { useCreateAgent } from '@/components/hooks/use-create-agent'
+import { useGetRuntimeInfo } from '@/components/hooks/use-get-runtime-info'
+import { useIsConnected } from '@/components/hooks/use-is-connected'
+import {
+  AgentDialog,
+  DialogType,
+  useDialogDetails
+} from '@/components/ui/agent-dialog'
+import { StatusCircle } from '@/components/ui/status-circle'
 import DeleteAgentConfirmation from './delete-agent-confirmation'
-import { useDeleteAgent } from '../hooks/use-agent-state'
-import { config } from 'dotenv'
-
-config()
+import EditAgentForm from './edit-agent-form'
 
 export function SidebarArea() {
   const queryClient = useQueryClient()
   const { agentId, setAgentId } = useAgentContext()
   const { mutate: createAgent, isPending } = useCreateAgent()
-  const { data, isLoading } = useAgents()
+  const { data: runtimeInfo, isLoading: isRuntimeInfoLoading } =
+    useGetRuntimeInfo()
+
+  const { data, isLoading: isAgentsLoading } = useAgents()
   const isConnected = useIsConnected()
   const { mutate: deleteAgent } = useDeleteAgent()
 
@@ -89,8 +93,8 @@ export function SidebarArea() {
   }, [data])
 
   const hostname = useMemo(() => {
-    if (process.env.NEXT_PUBLIC_LETTA_SERVER_URL) {
-      const lettaServerHostname = new URL(process.env.NEXT_PUBLIC_LETTA_SERVER_URL).hostname
+    if (runtimeInfo?.LETTA_SERVER_URL) {
+      const lettaServerHostname = new URL(runtimeInfo.LETTA_SERVER_URL).hostname
       return lettaServerHostname === 'localhost' ||
         lettaServerHostname === '127.0.0.1' ||
         lettaServerHostname === '0.0.0.0'
@@ -99,7 +103,9 @@ export function SidebarArea() {
     }
 
     return 'LOCAL SERVER'
-  }, [])
+  }, [runtimeInfo])
+
+  const isLoading = isAgentsLoading || isRuntimeInfoLoading
 
   return (
     <Sidebar className='mt-1'>
@@ -114,10 +120,18 @@ export function SidebarArea() {
                 }}
               >
                 <StatusCircle isConnected={isConnected} isLoading={isLoading} />
-                {hostname}
+                {isLoading ? (
+                  <LoaderCircle className='animate-spin' size={12} />
+                ) : (
+                  hostname
+                )}
               </div>
               <TooltipContent>
-                {process.env.NEXT_PUBLIC_LETTA_SERVER_URL || 'http://localhost:8283'}
+                {isLoading ? (
+                  <LoaderCircle className='animate-spin' size={12} />
+                ) : (
+                  runtimeInfo?.LETTA_SERVER_URL || 'http://localhost:8283'
+                )}
               </TooltipContent>
             </TooltipTrigger>
           </Tooltip>
