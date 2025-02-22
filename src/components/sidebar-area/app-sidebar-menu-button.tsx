@@ -15,6 +15,10 @@ export const AppSidebarMenuButton: React.FC<{
   const { toggleSidebar } = useSidebar()
   const { agentId, setAgentId } = useAgentContext()
 
+  // Get the last message safely
+  const lastMessage =
+    data && data.length > 0 ? data[data.length - 1]?.message : null
+
   return (
     <div
       className={`border-l-4 ${agent.id === agentId ? 'border-black' : 'border-gray-200'} hover:border-black`}
@@ -42,10 +46,12 @@ export const AppSidebarMenuButton: React.FC<{
             </span>
             <span className='block w-full truncate text-muted-foreground'>
               {data ? (
-                data[data.length - 1].message === DEFAULT_BOT_MESSAGE ? (
+                lastMessage === DEFAULT_BOT_MESSAGE ? (
                   <i>{NO_MESSAGES_LABEL}</i>
+                ) : lastMessage ? (
+                  `${lastMessage}`
                 ) : (
-                  `${data[data.length - 1].message}`
+                  <i>{NO_MESSAGES_LABEL}</i>
                 )
               ) : (
                 <SkeletonLoadBlock className='w-full h-[1.43em]' />

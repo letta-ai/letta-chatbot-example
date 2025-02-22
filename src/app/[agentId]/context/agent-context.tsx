@@ -1,5 +1,6 @@
 'use client'
-import { useParams, useRouter } from 'next/navigation'
+import { useAgentIdParam } from '@/components/hooks/use-agentId-param'
+import { useRouter } from 'next/navigation'
 
 export const useAgentContext = () => {
   const router = useRouter()
@@ -7,7 +8,7 @@ export const useAgentContext = () => {
     router.push(`/${id}`)
   }
 
-  const params = useParams<{ agentId: string }>()
+  const agentId = useAgentIdParam() as string
 
-  return { agentId: params.agentId, setAgentId }
+  return { agentId, setAgentId }
 }
