@@ -1,32 +1,24 @@
 'use client'
 
-import { useAgentContext } from './[agentId]/context/agent-context'
-import { SidebarArea } from '@/components/sidebar-area/sidebar-area'
 import { ChatHeader } from '@/components/chat-header'
-import { useRef } from 'react'
-import { useEffect } from 'react'
 import { useAgents } from '@/components/hooks/use-agents'
-import { useParams } from 'next/navigation'
+import { SidebarArea } from '@/components/sidebar-area/sidebar-area'
+import { useEffect } from 'react'
+import { useAgentContext } from './[agentId]/context/agent-context'
 
 export default function ContentLayout({
   children
 }: {
   children: React.ReactNode
 }) {
-  const params = useParams()
-  const { agentId: agentIdFromParams } = params
   const { data } = useAgents()
   const { agentId, setAgentId } = useAgentContext()
-  const ref = useRef(false)
 
   useEffect(() => {
-    if (data && data.length > 0 && !ref.current) {
-      if (!agentId) {
-        setAgentId(data[0].id)
-      }
-      ref.current = true
+    if (data?.[0]?.id && !agentId) {
+      setAgentId(data[0].id)
     }
-  }, [data, agentId, setAgentId, agentIdFromParams])
+  }, [data, agentId])
 
   return (
     <>
