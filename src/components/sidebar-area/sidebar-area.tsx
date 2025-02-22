@@ -28,9 +28,12 @@ import EditAgentForm from './edit-agent-form'
 export function SidebarArea() {
   const queryClient = useQueryClient()
   const { agentId, setAgentId } = useAgentContext()
-  const { mutate: createAgent, isPending } = useCreateAgent()
+  const { mutate: createAgent, isPending: isCreatingAgent } = useCreateAgent()
   const { data: runtimeInfo, isLoading: isRuntimeInfoLoading } =
     useGetRuntimeInfo()
+
+  const canCreateAgents =
+    process.env.NEXT_PUBLIC_CREATE_AGENTS_FROM_UI === 'true'
 
   const { data, isLoading: isAgentsLoading } = useAgents()
   const isConnected = useIsConnected()
@@ -50,7 +53,7 @@ export function SidebarArea() {
   }
 
   const handleCreateAgent = () => {
-    if (isPending) return
+    if (isCreatingAgent) return
     createAgent(undefined, {
       onSuccess: (data) => {
         queryClient.setQueriesData(
@@ -87,10 +90,10 @@ export function SidebarArea() {
   }
 
   useEffect(() => {
-    if (data && data.length === 0) {
+    if (!isAgentsLoading && !data?.length && canCreateAgents) {
       handleCreateAgent()
     }
-  }, [data])
+  }, [data, isAgentsLoading, canCreateAgents])
 
   const hostname = useMemo(() => {
     if (runtimeInfo?.LETTA_SERVER_URL) {
@@ -105,7 +108,7 @@ export function SidebarArea() {
     return 'LOCAL SERVER'
   }, [runtimeInfo])
 
-  const isLoading = isAgentsLoading || isRuntimeInfoLoading
+  const isLoading = isRuntimeInfoLoading || isAgentsLoading
 
   return (
     <Sidebar className='mt-1'>
@@ -137,16 +140,16 @@ export function SidebarArea() {
           </Tooltip>
         </div>
         <div className='flex justify-end p-2'>
-          {process.env.NEXT_PUBLIC_CREATE_AGENTS_FROM_UI === 'true' && (
+          {canCreateAgents && (
             <Button
-              disabled={isPending}
+              disabled={isCreatingAgent}
               type='button'
               onClick={() => {
                 handleCreateAgent()
               }}
               className='inline-flex size-3 h-fit items-center justify-center whitespace-nowrap bg-transparent font-medium text-primary shadow-none ring-offset-background transition-colors hover:hover:bg-sidebar-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50'
             >
-              {isPending ? (
+              {isCreatingAgent ? (
                 <LoaderCircle className='animate-spin' size={17} />
               ) : (
                 <PlusIcon width={16} height={16} />
