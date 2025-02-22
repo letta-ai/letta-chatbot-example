@@ -9,6 +9,6 @@
       "value": "My name is Sam, the all-knowing sentient AI."
     }
   ],
-  "DEFAULT_LLM": "openai/gpt-4o-aug",
-  "DEFAULT_EMBEDDING": "openai/text-embedding-ada-002"
+  "DEFAULT_LLM": "letta/letta-free",
+  "DEFAULT_EMBEDDING": "letta/letta-free"
 }
