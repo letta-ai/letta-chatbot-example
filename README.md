@@ -125,4 +125,11 @@ Once the app is running, open your web browser and navigate to [http://localhost
 
 ## ☁️ Running the app with Letta Cloud
 
-👾 TBA. Stayed tuned! [Follow us on Discord](https://discord.com/invite/letta) for updates.
+To connect the app to Letta Cloud, simple replace the Letta server URL with `https://app.letta.com`, and use your Letta Cloud API key as your token:
+```sh
+export NEXT_PUBLIC_LETTA_SERVER_URL="https://app.letta.com"
+export LETTA_ACCESS_TOKEN="your_letta_api_key"
+```
+
+Letta Cloud is currently in early access - [request access here](https://forms.letta.com/early-access).
+If you have access to Letta Cloud, you can generate an API key on your [account page](https://app.letta.com/api-keys).
