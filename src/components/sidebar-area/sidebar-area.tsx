@@ -1,7 +1,18 @@
 import { useAgentContext } from '@/app/[agentId]/context/agent-context'
+import { useDeleteAgent } from '@/components/hooks/use-agent-state'
+import { USE_AGENTS_KEY, useAgents } from '@/components/hooks/use-agents'
+import { useCreateAgent } from '@/components/hooks/use-create-agent'
+import { useGetRuntimeInfo } from '@/components/hooks/use-get-runtime-info'
+import { useIsConnected } from '@/components/hooks/use-is-connected'
 import { AppSidebar } from '@/components/sidebar-area/app-sidebar'
+import {
+  AgentDialog,
+  DialogType,
+  useDialogDetails
+} from '@/components/ui/agent-dialog'
 import { Button } from '@/components/ui/button'
 import { Sidebar } from '@/components/ui/sidebar'
+import { StatusCircle } from '@/components/ui/status-circle'
 import {
   Tooltip,
   TooltipContent,
@@ -11,17 +22,7 @@ import { AgentState } from '@letta-ai/letta-client/api'
 import { useQueryClient } from '@tanstack/react-query'
 import { LoaderCircle, PlusIcon } from 'lucide-react'
 import { useEffect, useMemo } from 'react'
-import { useDeleteAgent } from '@/components/hooks/use-agent-state'
-import { USE_AGENTS_KEY, useAgents } from '@/components/hooks/use-agents'
-import { useCreateAgent } from '@/components/hooks/use-create-agent'
-import { useGetRuntimeInfo } from '@/components/hooks/use-get-runtime-info'
-import { useIsConnected } from '@/components/hooks/use-is-connected'
-import {
-  AgentDialog,
-  DialogType,
-  useDialogDetails
-} from '@/components/ui/agent-dialog'
-import { StatusCircle } from '@/components/ui/status-circle'
+import { SkeletonLoadBlock } from '../ui/skeleton-load-block'
 import DeleteAgentConfirmation from './delete-agent-confirmation'
 import EditAgentForm from './edit-agent-form'
 
@@ -105,7 +106,7 @@ export function SidebarArea() {
         : 'REMOTE SERVER'
     }
 
-    return 'LOCAL SERVER'
+    return null
   }, [runtimeInfo])
 
   const isLoading = isRuntimeInfoLoading || isAgentsLoading
@@ -114,8 +115,8 @@ export function SidebarArea() {
     <Sidebar className='mt-1'>
       <div className='flex flex-row items-center justify-between'>
         <div className='text-xs font-bold relative flex w-full min-w-0 cursor-default p-2.5 pl-4'>
-          <Tooltip>
-            <TooltipTrigger>
+          <Tooltip open={!hostname ? false : undefined}>
+            <TooltipTrigger className='w-full'>
               <div
                 className='flex items-center w-full'
                 onClick={() => {
@@ -124,25 +125,19 @@ export function SidebarArea() {
               >
                 <StatusCircle isConnected={isConnected} isLoading={isLoading} />
                 {isLoading ? (
-                  <LoaderCircle className='animate-spin' size={12} />
+                  <SkeletonLoadBlock className='w-full h-[1.43em]' />
                 ) : (
                   hostname
                 )}
               </div>
-              <TooltipContent>
-                {isLoading ? (
-                  <LoaderCircle className='animate-spin' size={12} />
-                ) : (
-                  runtimeInfo?.LETTA_SERVER_URL || 'http://localhost:8283'
-                )}
-              </TooltipContent>
+              <TooltipContent>{runtimeInfo?.LETTA_SERVER_URL}</TooltipContent>
             </TooltipTrigger>
           </Tooltip>
         </div>
         <div className='flex justify-end p-2'>
           {canCreateAgents && (
             <Button
-              disabled={isCreatingAgent}
+              disabled={isCreatingAgent || isLoading || !hostname}
               type='button'
               onClick={() => {
                 handleCreateAgent()

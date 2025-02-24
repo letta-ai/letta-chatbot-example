@@ -3,6 +3,7 @@ import type { RuntimeInfo } from '@/app/(server)/api/runtime/types'
 export function useGetRuntimeInfo() {
   return useQuery<RuntimeInfo>({
     queryKey: ['runtime-info'],
+    refetchInterval: 5000,
     queryFn: async () => {
       const response = await fetch('/api/runtime', {
         method: 'GET',
