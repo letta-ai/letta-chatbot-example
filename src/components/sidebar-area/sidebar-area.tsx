@@ -26,15 +26,15 @@ import { SkeletonLoadBlock } from '../ui/skeleton-load-block'
 import DeleteAgentConfirmation from './delete-agent-confirmation'
 import EditAgentForm from './edit-agent-form'
 
-export function SidebarArea() {
+interface SidebarAreaProps {
+  canCreate: boolean
+}
+export function SidebarArea({ canCreate }: SidebarAreaProps) {
   const queryClient = useQueryClient()
   const { agentId, setAgentId } = useAgentContext()
   const { mutate: createAgent, isPending: isCreatingAgent } = useCreateAgent()
   const { data: runtimeInfo, isLoading: isRuntimeInfoLoading } =
     useGetRuntimeInfo()
-
-  const canCreateAgents =
-    process.env.NEXT_PUBLIC_CREATE_AGENTS_FROM_UI === 'true'
 
   const { data, isLoading: isAgentsLoading } = useAgents()
   const isConnected = useIsConnected()
@@ -91,17 +91,15 @@ export function SidebarArea() {
   }
 
   useEffect(() => {
-    if (!isAgentsLoading && !data?.length && canCreateAgents) {
+    if (!isAgentsLoading && !data?.length && canCreate) {
       handleCreateAgent()
     }
-  }, [data, isAgentsLoading, canCreateAgents])
+  }, [data, isAgentsLoading, canCreate])
 
   const hostname = useMemo(() => {
     if (runtimeInfo?.LETTA_SERVER_URL) {
       const lettaServerHostname = new URL(runtimeInfo.LETTA_SERVER_URL).hostname
-      return lettaServerHostname === 'localhost' ||
-        lettaServerHostname === '127.0.0.1' ||
-        lettaServerHostname === '0.0.0.0'
+      return ['localhost', '127.0.0.1', '0.0.0.0'].includes(lettaServerHostname)
         ? 'LOCAL SERVER'
         : 'REMOTE SERVER'
     }
@@ -135,7 +133,7 @@ export function SidebarArea() {
           </Tooltip>
         </div>
         <div className='flex justify-end p-2'>
-          {canCreateAgents && (
+          {canCreate && (
             <Button
               disabled={isCreatingAgent || isLoading || !hostname}
               type='button'

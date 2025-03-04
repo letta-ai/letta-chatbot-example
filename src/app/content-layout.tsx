@@ -22,7 +22,9 @@ export default function ContentLayout({
 
   return (
     <>
-      <SidebarArea />
+      <SidebarArea
+        canCreate={process.env.NEXT_PUBLIC_CREATE_AGENTS_FROM_UI === 'true'}
+      />
       <main className='relative flex h-dvh w-dvw flex-col overflow-hidden'>
         <div className='flex border-b border-border p-2.5 gap-3 w-full'>
           <ChatHeader />
