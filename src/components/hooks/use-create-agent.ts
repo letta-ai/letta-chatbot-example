@@ -2,13 +2,17 @@ import { useMutation } from '@tanstack/react-query'
 
 export function useCreateAgent() {
   return useMutation({
-    mutationFn: () => {
-      return fetch('/api/agents', {
+    mutationFn: async () => {
+      const response = await fetch('/api/agents', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         }
-      }).then((response) => response.json())
+      })
+      if (!response.ok) {
+        throw new Error('Failed to create agent')
+      }
+      return response.json()
     }
   })
 }

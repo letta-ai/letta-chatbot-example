@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { BrainIcon, LoaderCircle } from 'lucide-react'
+import { BrainIcon } from 'lucide-react'
 import { createContext, forwardRef, useContext, useState } from 'react'
 
 interface AgentDetailsContextProps {
@@ -73,4 +73,4 @@ const AgentDetailsTrigger = forwardRef<
   )
 })
 
-export { AgentDetailsTrigger, AgentDetailsProvider, useAgentDetails }
+export { AgentDetailsProvider, AgentDetailsTrigger, useAgentDetails }

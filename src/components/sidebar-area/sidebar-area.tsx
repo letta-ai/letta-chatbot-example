@@ -1,34 +1,42 @@
-import { Button } from '@/components/ui/button'
-import { LoaderCircle, PlusIcon } from 'lucide-react'
-import { AppSidebar } from '@/components/sidebar-area/app-sidebar'
-import { Sidebar } from '@/components/ui/sidebar'
 import { useAgentContext } from '@/app/[agentId]/context/agent-context'
-import { useCreateAgent } from '../hooks/use-create-agent'
-import { useQueryClient } from '@tanstack/react-query'
-import { USE_AGENTS_KEY, useAgents } from '../hooks/use-agents'
-import { StatusCircle } from '../ui/status-circle'
-import { useIsConnected } from '../hooks/use-is-connected'
-import { useEffect, useMemo } from 'react'
-import { AgentState } from '@letta-ai/letta-client/api'
+import { useDeleteAgent } from '@/components/hooks/use-agent-state'
+import { USE_AGENTS_KEY, useAgents } from '@/components/hooks/use-agents'
+import { useCreateAgent } from '@/components/hooks/use-create-agent'
+import { useGetRuntimeInfo } from '@/components/hooks/use-get-runtime-info'
+import { useIsConnected } from '@/components/hooks/use-is-connected'
+import { AppSidebar } from '@/components/sidebar-area/app-sidebar'
+import {
+  AgentDialog,
+  DialogType,
+  useDialogDetails
+} from '@/components/ui/agent-dialog'
+import { Button } from '@/components/ui/button'
+import { Sidebar } from '@/components/ui/sidebar'
+import { StatusCircle } from '@/components/ui/status-circle'
 import {
   Tooltip,
-  TooltipTrigger,
-  TooltipContent
+  TooltipContent,
+  TooltipTrigger
 } from '@/components/ui/tooltip'
-import EditAgentForm from './edit-agent-form'
-import { AgentDialog } from '../ui/agent-dialog'
-import { DialogType, useDialogDetails } from '../ui/agent-dialog'
+import { AgentState } from '@letta-ai/letta-client/api'
+import { useQueryClient } from '@tanstack/react-query'
+import { LoaderCircle, PlusIcon } from 'lucide-react'
+import { useEffect, useMemo } from 'react'
+import { SkeletonLoadBlock } from '../ui/skeleton-load-block'
 import DeleteAgentConfirmation from './delete-agent-confirmation'
-import { useDeleteAgent } from '../hooks/use-agent-state'
-import { config } from 'dotenv'
+import EditAgentForm from './edit-agent-form'
 
-config()
-
-export function SidebarArea() {
+interface SidebarAreaProps {
+  canCreate: boolean
+}
+export function SidebarArea({ canCreate }: SidebarAreaProps) {
   const queryClient = useQueryClient()
   const { agentId, setAgentId } = useAgentContext()
-  const { mutate: createAgent, isPending } = useCreateAgent()
-  const { data, isLoading } = useAgents()
+  const { mutate: createAgent, isPending: isCreatingAgent } = useCreateAgent()
+  const { data: runtimeInfo, isLoading: isRuntimeInfoLoading } =
+    useGetRuntimeInfo()
+
+  const { data, isLoading: isAgentsLoading } = useAgents()
   const isConnected = useIsConnected()
   const { mutate: deleteAgent } = useDeleteAgent()
 
@@ -46,7 +54,7 @@ export function SidebarArea() {
   }
 
   const handleCreateAgent = () => {
-    if (isPending) return
+    if (isCreatingAgent) return
     createAgent(undefined, {
       onSuccess: (data) => {
         queryClient.setQueriesData(
@@ -83,30 +91,30 @@ export function SidebarArea() {
   }
 
   useEffect(() => {
-    if (data && data.length === 0) {
+    if (!isAgentsLoading && !data?.length && canCreate) {
       handleCreateAgent()
     }
-  }, [data])
+  }, [data, isAgentsLoading, canCreate])
 
   const hostname = useMemo(() => {
-    if (process.env.NEXT_PUBLIC_LETTA_SERVER_URL) {
-      const lettaServerHostname = new URL(process.env.NEXT_PUBLIC_LETTA_SERVER_URL).hostname
-      return lettaServerHostname === 'localhost' ||
-        lettaServerHostname === '127.0.0.1' ||
-        lettaServerHostname === '0.0.0.0'
+    if (runtimeInfo?.LETTA_SERVER_URL) {
+      const lettaServerHostname = new URL(runtimeInfo.LETTA_SERVER_URL).hostname
+      return ['localhost', '127.0.0.1', '0.0.0.0'].includes(lettaServerHostname)
         ? 'LOCAL SERVER'
         : 'REMOTE SERVER'
     }
 
-    return 'LOCAL SERVER'
-  }, [])
+    return null
+  }, [runtimeInfo])
+
+  const isLoading = isRuntimeInfoLoading || isAgentsLoading
 
   return (
     <Sidebar className='mt-1'>
       <div className='flex flex-row items-center justify-between'>
         <div className='text-xs font-bold relative flex w-full min-w-0 cursor-default p-2.5 pl-4'>
-          <Tooltip>
-            <TooltipTrigger>
+          <Tooltip open={!hostname ? false : undefined}>
+            <TooltipTrigger className='w-full'>
               <div
                 className='flex items-center w-full'
                 onClick={() => {
@@ -114,25 +122,27 @@ export function SidebarArea() {
                 }}
               >
                 <StatusCircle isConnected={isConnected} isLoading={isLoading} />
-                {hostname}
+                {isLoading ? (
+                  <SkeletonLoadBlock className='w-full h-[1.43em]' />
+                ) : (
+                  hostname
+                )}
               </div>
-              <TooltipContent>
-                {process.env.NEXT_PUBLIC_LETTA_SERVER_URL || 'http://localhost:8283'}
-              </TooltipContent>
+              <TooltipContent>{runtimeInfo?.LETTA_SERVER_URL}</TooltipContent>
             </TooltipTrigger>
           </Tooltip>
         </div>
         <div className='flex justify-end p-2'>
-          {process.env.NEXT_PUBLIC_CREATE_AGENTS_FROM_UI === 'true' && (
+          {canCreate && (
             <Button
-              disabled={isPending}
+              disabled={isCreatingAgent || isLoading || !hostname}
               type='button'
               onClick={() => {
                 handleCreateAgent()
               }}
               className='inline-flex size-3 h-fit items-center justify-center whitespace-nowrap bg-transparent font-medium text-primary shadow-none ring-offset-background transition-colors hover:hover:bg-sidebar-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50'
             >
-              {isPending ? (
+              {isCreatingAgent ? (
                 <LoaderCircle className='animate-spin' size={17} />
               ) : (
                 <PlusIcon width={16} height={16} />

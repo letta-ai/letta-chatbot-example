@@ -119,7 +119,7 @@ npm run dev
 Environment variables can be controlled by setting them in your `.env` file or by setting them in your deployment environment.
 
 - `LETTA_ACCESS_TOKEN` - Your Letta access token, if not using cloud this is usually optiona.
-- `NEXT_PUBLIC_LETTA_SERVER_URL` - The URL of your Letta server. Default is `http://localhost:8283`.
+- `LETTA_SERVER_URL` - The URL of your Letta server. Default is `http://localhost:8283`.
 - `NEXT_PUBLIC_CREATE_AGENTS_FROM_UI` - If set to `true` will show a `+` button in the sidebar to create new agents from the `default-agents.json` file. Default is `true`.
 - `USE_COOKIE_BASED_AUTHENTICATION` - If set to `true` will use cookie-based sessions to emulate users. Default is `true`.
 

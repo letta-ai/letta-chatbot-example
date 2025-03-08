@@ -8,12 +8,12 @@ export function useAgents() {
   return useQuery<Letta.AgentState[]>({
     queryKey: USE_AGENTS_KEY,
     retry: 0,
-    queryFn: () =>
-      fetch('/api/agents').then((res) => {
-        if (res.status !== 200) {
-          throw new Error()
-        }
-        return res.json()
-      })
+    queryFn: async () => {
+      const response = await fetch('/api/agents')
+      if (!response.ok) {
+        throw new Error('Failed to fetch agents')
+      }
+      return response.json()
+    }
   })
 }
