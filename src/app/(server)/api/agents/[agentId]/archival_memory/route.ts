@@ -14,7 +14,7 @@ async function getAgentArchivalMemory(
   const { agentId } = result
 
   try {
-    const archivalMemory = await client.agents.archivalMemory.list(agentId)
+    const archivalMemory = await client.agents.passages.list(agentId)
     if (!archivalMemory) {
       return NextResponse.json(
         { error: 'Archival memory not found' },
