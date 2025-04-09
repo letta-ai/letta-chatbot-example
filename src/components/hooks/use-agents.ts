@@ -13,7 +13,13 @@ export function useAgents() {
       if (!response.ok) {
         throw new Error('Failed to fetch agents')
       }
-      return response.json()
+      const agents = await response.json()
+
+      // Add multiagent roundrobin logic
+      const roundRobinAgents = agents.filter((agent: Letta.AgentState) => agent.tags.includes('roundrobin'))
+      const nonRoundRobinAgents = agents.filter((agent: Letta.AgentState) => !agent.tags.includes('roundrobin'))
+
+      return [...roundRobinAgents, ...nonRoundRobinAgents]
     }
   })
 }

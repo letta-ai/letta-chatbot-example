@@ -19,7 +19,14 @@ async function getAgents(req: NextRequest) {
       const dateB = b.updatedAt ? new Date(b.updatedAt).getTime() : 0
       return dateB - dateA
     })
-    return NextResponse.json(sortedAgents)
+
+    // Add multiagent roundrobin logic
+    const roundRobinAgents = sortedAgents.filter(agent => agent.tags.includes('roundrobin'))
+    const nonRoundRobinAgents = sortedAgents.filter(agent => !agent.tags.includes('roundrobin'))
+
+    const finalAgents = [...roundRobinAgents, ...nonRoundRobinAgents]
+
+    return NextResponse.json(finalAgents)
   } catch (error) {
     console.error('Error fetching agents:', error)
     return NextResponse.json(
@@ -41,12 +48,18 @@ async function createAgent(req: NextRequest) {
   }
 
   try {
+    const body = await req.json()
     const newAgent = await client.agents.create({
       memoryBlocks: DEFAULT_MEMORY_BLOCKS,
       model: DEFAULT_LLM,
       embedding: DEFAULT_EMBEDDING,
       tags: getUserTagId(userId)
     })
+
+    // Add multiagent roundrobin creation logic
+    if (body && body.roundrobin) {
+      newAgent.tags.push('roundrobin')
+    }
 
     return NextResponse.json(newAgent)
   } catch (error) {

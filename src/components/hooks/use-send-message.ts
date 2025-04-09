@@ -125,6 +125,33 @@ export function useSendMessage() {
                   ]
                 }
 
+                // Add logic to handle the response from multiagent roundrobin agents
+                if (response.messageType === MESSAGE_TYPE.ROUNDROBIN_MESSAGE) {
+                  if (existingMessage) {
+                    return data.map((message) => {
+                      if (message.id === getMessageId(response)) {
+                        return {
+                          id: getMessageId(response),
+                          date: new Date(response.date).getTime(),
+                          messageType: MESSAGE_TYPE.ROUNDROBIN_MESSAGE,
+                          message: `${existingMessage.message || ''}${response.content || ''}`
+                        }
+                      }
+                      return message
+                    })
+                  }
+
+                  return [
+                    ...data,
+                    {
+                      id: getMessageId(response),
+                      date: new Date(response.date).getTime(),
+                      messageType: MESSAGE_TYPE.ROUNDROBIN_MESSAGE,
+                      message: response.content || ''
+                    }
+                  ]
+                }
+
                 return data
               }
             )
