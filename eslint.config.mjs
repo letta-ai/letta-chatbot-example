@@ -21,9 +21,6 @@ const eslintConfig = [
     ignores: ['node_modules', 'dist', 'build', '.next'],
   },
   {
-    parser: '@typescript-eslint/parser',
-  },
-  {
     rules: {
       '@typescript-eslint/no-explicit-any': 'error',
     },
