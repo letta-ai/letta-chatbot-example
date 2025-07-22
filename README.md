@@ -20,7 +20,7 @@
 
 <div align="center">
 <h3>One-click deploy with Vercel</h3>
-<a href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fletta-ai%2Fletta-chatbot-template&env=LETTA_ACCESS_TOKEN,LETTA_SERVER_URL&envDescription=(Optional)%20Your%20Letta%20access%20token%3A%20set%20it%20to%20any%20arbitrary%20value%20if%20none%20is%20provided.%20Default%20server%20url%20is%20http%3A%2F%2Flocalhost%3A3000&envLink=https%3A%2F%2Fgithub.com%2Fletta-ai%2Fletta-chatbot-template&project-name=my-letta-chatbot&repository-name=my-letta-chatbot"><img src="https://vercel.com/button" alt="Deploy with Vercel"/></a></div>
+<a href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fletta-ai%2Fletta-chatbot-template&env=LETTA_API_KEY,LETTA_BASE_URL&envDescription=(Optional)%20Your%20Letta%20access%20token%3A%20set%20it%20to%20any%20arbitrary%20value%20if%20none%20is%20provided.%20Default%20server%20url%20is%20http%3A%2F%2Flocalhost%3A3000&envLink=https%3A%2F%2Fgithub.com%2Fletta-ai%2Fletta-chatbot-template&project-name=my-letta-chatbot&repository-name=my-letta-chatbot"><img src="https://vercel.com/button" alt="Deploy with Vercel"/></a></div>
 </div>
 
 > [!NOTE]
@@ -118,8 +118,8 @@ npm run dev
 
 Environment variables can be controlled by setting them in your `.env` file or by setting them in your deployment environment.
 
-- `LETTA_ACCESS_TOKEN` - Your Letta access token, if not using cloud this is usually optiona.
-- `LETTA_SERVER_URL` - The URL of your Letta server. Default is `http://localhost:8283`.
+- `LETTA_API_KEY` - Your Letta access token, if not using cloud this is usually optiona.
+- `LETTA_BASE_URL` - The URL of your Letta server. Default is `http://localhost:8283`.
 - `NEXT_PUBLIC_CREATE_AGENTS_FROM_UI` - If set to `true` will show a `+` button in the sidebar to create new agents from the `default-agents.json` file. Default is `true`.
 - `USE_COOKIE_BASED_AUTHENTICATION` - If set to `true` will use cookie-based sessions to emulate users. Default is `true`.
 

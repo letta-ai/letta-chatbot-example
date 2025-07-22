@@ -97,8 +97,8 @@ export function SidebarArea({ canCreate }: SidebarAreaProps) {
   }, [data, isAgentsLoading, canCreate])
 
   const hostname = useMemo(() => {
-    if (runtimeInfo?.LETTA_SERVER_URL) {
-      const lettaServerHostname = new URL(runtimeInfo.LETTA_SERVER_URL).hostname
+    if (runtimeInfo?.LETTA_BASE_URL) {
+      const lettaServerHostname = new URL(runtimeInfo.LETTA_BASE_URL).hostname
       return ['localhost', '127.0.0.1', '0.0.0.0'].includes(lettaServerHostname)
         ? 'LOCAL SERVER'
         : 'REMOTE SERVER'
@@ -128,7 +128,7 @@ export function SidebarArea({ canCreate }: SidebarAreaProps) {
                   hostname
                 )}
               </div>
-              <TooltipContent>{runtimeInfo?.LETTA_SERVER_URL}</TooltipContent>
+              <TooltipContent>{runtimeInfo?.LETTA_BASE_URL}</TooltipContent>
             </TooltipTrigger>
           </Tooltip>
         </div>
