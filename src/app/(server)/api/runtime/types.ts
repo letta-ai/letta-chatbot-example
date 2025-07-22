@@ -1,3 +1,3 @@
 export type RuntimeInfo = {
-  LETTA_SERVER_URL: string
+  LETTA_BASE_URL: string
 }

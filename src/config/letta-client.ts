@@ -4,7 +4,7 @@ import { config } from 'dotenv'
 config()
 
 const LETTA_ACCESS_TOKEN = process.env.LETTA_ACCESS_TOKEN || 'DEFAULT_TOKEN'
-const LETTA_SERVER_URL = process.env.LETTA_SERVER_URL || 'http://localhost:8283'
+const LETTA_BASE_URL = process.env.LETTA_BASE_URL || 'http://localhost:8283'
 
 if (!LETTA_ACCESS_TOKEN) {
   console.error(
@@ -12,13 +12,13 @@ if (!LETTA_ACCESS_TOKEN) {
   )
 }
 
-if (!LETTA_SERVER_URL) {
+if (!LETTA_BASE_URL) {
   console.error('BASE_URL is not set. We are using your localhost.')
 }
 
 const client = new LettaClient({
   token: LETTA_ACCESS_TOKEN,
-  baseUrl: LETTA_SERVER_URL
+  baseUrl: LETTA_BASE_URL
 })
 
 export default client
