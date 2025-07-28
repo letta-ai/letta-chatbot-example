@@ -5,7 +5,7 @@ import Markdown from 'react-markdown'
 
 interface MessagePillProps {
   message: string
-  sender: Letta.agents.LettaStreamingResponse['messageType']
+  sender: 'user' | 'assistant'
 }
 
 const MessagePill: React.FC<MessagePillProps> = ({ message, sender }) => {
@@ -13,7 +13,7 @@ const MessagePill: React.FC<MessagePillProps> = ({ message, sender }) => {
     <div
       className={cn(
         'flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm',
-        sender === 'user_message'
+        sender === 'user'
           ? 'ml-auto bg-primary text-primary-foreground'
           : 'bg-muted'
       )}

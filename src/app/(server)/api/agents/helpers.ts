@@ -2,12 +2,15 @@ import client from '@/config/letta-client'
 import { Context, LETTA_UID } from '@/types'
 import { NextRequest, NextResponse } from 'next/server'
 import { USE_COOKIE_BASED_AUTHENTICATION } from '@/constants'
+import { useAgentMessages } from '@/components/hooks/use-agent-messages'
 
 export async function validateAgentOwner(
   req: NextRequest,
   context: Context<{ agentId: string }>
 ) {
-  const { agentId } = await context.params
+  // const { agentId } = await context.params
+
+  const agentId = 'agent-338196a3-3a09-4766-bc09-ce56e5cc4cbd'
 
   if (!USE_COOKIE_BASED_AUTHENTICATION) {
     return {

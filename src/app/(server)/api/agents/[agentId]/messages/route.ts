@@ -4,6 +4,7 @@ import { filterMessages } from './helpers'
 import { Letta } from '@letta-ai/letta-client'
 import { validateAgentOwner } from '../../helpers'
 import { Context, ROLE_TYPE } from '@/types'
+import { convertToAiSdkMessage } from '@letta-ai/vercel-ai-sdk-provider'
 
 async function getAgentMessages(
   req: NextRequest,
@@ -16,12 +17,13 @@ async function getAgentMessages(
   const { agentId } = result
 
   try {
-    const messages = await client.agents.messages.list(agentId, {
-      limit: 100
-    })
+    const messages = await client.agents.messages.list(agentId)
 
-    const result = filterMessages(messages as Letta.LettaMessageUnion[])
-    return NextResponse.json(result)
+    // const messages = await client.agents.messages.list(agentId, { limit: 100 })
+    // console.log(messages)
+
+    // const result = filterMessages(messages as Letta.LettaMessageUnion[])
+    return NextResponse.json(convertToAiSdkMessage(messages))
   } catch (error) {
     console.error('Error fetching messages:', error)
     return NextResponse.json(

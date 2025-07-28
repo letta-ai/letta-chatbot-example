@@ -1,4 +1,4 @@
-import { LettaClient } from '@letta-ai/letta-client'
+import { createLetta } from '@letta-ai/vercel-ai-sdk-provider'
 import { config } from 'dotenv'
 
 config()
@@ -16,9 +16,9 @@ if (!LETTA_BASE_URL) {
   console.error('BASE_URL is not set. We are using your localhost.')
 }
 
-const client = new LettaClient({
+const letta = createLetta({
   token: LETTA_API_KEY,
   baseUrl: LETTA_BASE_URL
 })
 
-export default client
+export default letta.client

@@ -13,16 +13,18 @@ import { ReasoningMessageBlock } from '@/components/ui/reasoning-message'
 import { useReasoningMessage } from '@/components/toggle-reasoning-messages'
 import { AssistantMessageContent } from '@letta-ai/letta-client/api/types'
 import { extractMessageText } from '@/lib/utils'
+import type { UseChatHelpers } from '@ai-sdk/react'
 
 interface MessagesProps {
-  isSendingMessage: boolean
   sendMessage: (options: UseSendMessageType) => void
+  messages: any
+  status: UseChatHelpers['status']
 }
 
 export const Messages = (props: MessagesProps) => {
-  const { isSendingMessage, sendMessage } = props
+  const { sendMessage, messages, status } = props
   const { agentId } = useAgentContext()
-  const { data: messages, isLoading } = useAgentMessages(agentId)
+  // const { data: messages, isLoading } = useAgentMessages(agentId)
   const { isEnabled } = useReasoningMessage()
   const { data: agents } = useAgents()
 
@@ -30,6 +32,9 @@ export const Messages = (props: MessagesProps) => {
   const isConnected = useIsConnected()
 
   const mounted = useRef(false)
+
+  const isSendingMessage = status === 'submitted'
+
 
   useEffect(() => {
     if (!messages) {
@@ -69,6 +74,7 @@ export const Messages = (props: MessagesProps) => {
     return messages.length === 3 && messages[0].message === DEFAULT_BOT_MESSAGE
   }, [messages])
 
+
   return (
     <div ref={messagesListRef} className='flex-1 overflow-auto'>
       <div className='group/message mx-auto w-full max-w-3xl px-4 h-full'>
@@ -79,25 +85,29 @@ export const Messages = (props: MessagesProps) => {
             ) : (
               <div className='flex min-w-0 flex-1 flex-col gap-6 pt-4'>
                 {messages.map((message) => {
-                  if (
-                    [
-                      MESSAGE_TYPE.REASONING_MESSAGE,
-                      MESSAGE_TYPE.TOOL_CALL_MESSAGE
-                    ].includes(message.messageType)
-                  ) {
+                  const reasoningPart = message.parts.find((part) => part.type === 'reasoning')
+                  if (reasoningPart) {
                     return (
+                      <>
                       <ReasoningMessageBlock
-                        key={message.id}
-                        message={extractMessageText(message.message)}
+                        key={message.id + '_reasoning'}
+                        message={reasoningPart.reasoning}
                         isEnabled={isEnabled}
                       />
+                      <MessagePill
+                        key={message.id}
+                        message={message.content}
+                        sender={message.role}
+                      />
+                      </>
+
                     )
                   } else {
                     return (
                       <MessagePill
                         key={message.id}
-                        message={extractMessageText(message.message)}
-                        sender={message.messageType}
+                        message={message.content}
+                        sender={message.role}
                       />
                     )
                   }
@@ -111,7 +121,7 @@ export const Messages = (props: MessagesProps) => {
             )
           ) : (
             <div className='flex min-w-0 flex-1 flex-col justify-center items-center h-full'>
-              {isLoading || (isConnected && agents && agents.length === 0) ? (
+              {status === 'ready' || (isConnected && agents && agents.length === 0) ? (
                 <LoaderCircle className='animate-spin' size={32} />
               ) : (
                 ERROR_CONNECTING

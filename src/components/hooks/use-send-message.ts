@@ -4,6 +4,7 @@ import { getAgentMessagesQueryKey } from './use-agent-messages'
 import { AppMessage, MESSAGE_TYPE, ROLE_TYPE } from '../../types'
 import * as Letta from '@letta-ai/letta-client/api'
 import { extractMessageText, getMessageId } from '@/lib/utils'
+import { useChat } from '@ai-sdk/react'
 
 export interface UseSendMessageType {
   agentId: string
@@ -15,7 +16,8 @@ export function useSendMessage() {
 
   async function sendMessage(options: UseSendMessageType) {
     const { agentId, text } = options
-    const url = `/api/agents/${agentId}/messages`
+    // const url = `/api/agents/${agentId}/messages`
+    const url = `/api/chat` // Use the chat route for streaming messages
     try {
       queryClient.setQueriesData<AppMessage[]>(
         {
@@ -39,103 +41,35 @@ export function useSendMessage() {
       )
 
       const controller = new AbortController()
-      try {
-        await fetchEventSource(url, {
-          signal: controller.signal,
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ role: ROLE_TYPE.USER, text }),
-          onmessage: (message) => {
-            const response = JSON.parse(
-              message.data
-            ) as Letta.agents.LettaStreamingResponse
-            queryClient.setQueriesData<AppMessage[] | undefined>(
-              {
-                queryKey: getAgentMessagesQueryKey(agentId)
-              },
-              (_data) => {
-                if (!_data) {
-                  return _data
-                }
 
-                const data = _data.filter(
-                  (message) => message.id !== 'deleteme_'
-                )
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text, agentId }),
+      })
 
-                const existingMessage = data.find(
-                  (message) => message.id === getMessageId(response)
-                )
-
-                if (response.messageType === MESSAGE_TYPE.ASSISTANT_MESSAGE) {
-                  // hack to remove the { "message": part of the response
-                  const extractedMessage = extractMessageText(
-                    response.content
-                  ).replace('{"message":"', '')
-
-                  if (existingMessage) {
-                    return data.map((message) => {
-                      if (message.id === getMessageId(response)) {
-                        return {
-                          id: getMessageId(response),
-                          date: new Date(response.date).getTime(),
-                          messageType: MESSAGE_TYPE.ASSISTANT_MESSAGE,
-                          message: `${existingMessage.message || ''}${extractedMessage || ''}`
-                        }
-                      }
-                      return message
-                    })
-                  }
-
-                  return [
-                    ...data,
-                    {
-                      id: getMessageId(response),
-                      date: new Date(response.date).getTime(),
-                      messageType: MESSAGE_TYPE.ASSISTANT_MESSAGE,
-                      message: extractedMessage || ''
-                    }
-                  ]
-                }
-
-                if (response.messageType === MESSAGE_TYPE.REASONING_MESSAGE) {
-                  if (existingMessage) {
-                    return data.map((message) => {
-                      if (message.id === getMessageId(response)) {
-                        return {
-                          id: getMessageId(response),
-                          date: new Date(response.date).getTime(),
-                          messageType: MESSAGE_TYPE.REASONING_MESSAGE,
-                          message: `${existingMessage.message || ''}${response.reasoning || ''}`
-                        }
-                      }
-                      return message
-                    })
-                  }
-
-                  return [
-                    ...data,
-                    {
-                      id: getMessageId(response),
-                      date: new Date(response.date).getTime(),
-                      messageType: MESSAGE_TYPE.REASONING_MESSAGE,
-                      message: response.reasoning || ''
-                    }
-                  ]
-                }
-
-                return data
-              }
-            )
-          }
-        })
-      } finally {
-        // Invalidate the messages query after stream ends
-        queryClient.invalidateQueries({
-          queryKey: getAgentMessagesQueryKey(agentId)
-        })
+      if (!res.ok) {
+        throw new Error(`Chat request failed: ${res.statusText}`)
       }
+
+      const reader = res.body!.getReader()
+      const decoder = new TextDecoder()
+      let done = false
+      let full = ''
+
+      while (!done) {
+        const { value, done: doneReading } = await reader.read()
+        done = doneReading
+        if (value) {
+          const chunk = decoder.decode(value)
+          full += chunk
+          // e.g. append to your UI
+          console.log('Chunk:', chunk)
+        }
+      }
+
+      console.log('Final:', full)
+
     } catch (error) {
       console.error('Error sending message:', error)
     }
