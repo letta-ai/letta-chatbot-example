@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef } from 'react'
 import { MessagePill } from '@/components/ui/message'
-import { useAgentContext } from '../../app/[agentId]/context/agent-context'
 import { useAgentMessages } from '../hooks/use-agent-messages'
 import { Ellipsis, LoaderCircle } from 'lucide-react'
 import { MessagePopover } from './message-popover'
@@ -11,9 +10,8 @@ import { UseSendMessageType } from '@/components/hooks/use-send-message'
 import { MESSAGE_TYPE } from '@/types'
 import { ReasoningMessageBlock } from '@/components/ui/reasoning-message'
 import { useReasoningMessage } from '@/components/toggle-reasoning-messages'
-import { AssistantMessageContent } from '@letta-ai/letta-client/api/types'
-import { extractMessageText } from '@/lib/utils'
 import type { UseChatHelpers } from '@ai-sdk/react'
+import { Message as MessageType } from '@ai-sdk/ui-utils'
 
 interface MessagesProps {
   sendMessage: (options: UseSendMessageType) => void
@@ -23,8 +21,6 @@ interface MessagesProps {
 
 export const Messages = (props: MessagesProps) => {
   const { sendMessage, messages, status } = props
-  const { agentId } = useAgentContext()
-  // const { data: messages, isLoading } = useAgentMessages(agentId)
   const { isEnabled } = useReasoningMessage()
   const { data: agents } = useAgents()
 
@@ -84,8 +80,8 @@ export const Messages = (props: MessagesProps) => {
               <MessagePopover sendMessage={sendMessage} key={messages[0].id} />
             ) : (
               <div className='flex min-w-0 flex-1 flex-col gap-6 pt-4'>
-                {messages.map((message) => {
-                  const reasoningPart = message.parts.find((part) => part.type === 'reasoning')
+                {messages.map((message: MessageType) => {
+                  const reasoningPart = message.parts?.find((part) => part.type === 'reasoning')
                   if (reasoningPart) {
                     return (
                       <>
@@ -100,7 +96,6 @@ export const Messages = (props: MessagesProps) => {
                         sender={message.role}
                       />
                       </>
-
                     )
                   } else {
                     return (

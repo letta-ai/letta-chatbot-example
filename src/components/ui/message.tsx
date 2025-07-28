@@ -1,11 +1,13 @@
 import * as React from 'react'
 import { cn } from '@/lib/utils'
-import { Letta } from '@letta-ai/letta-client'
 import Markdown from 'react-markdown'
+import { Message as MessageType } from '@ai-sdk/ui-utils'
+
+type Sender = MessageType['role']
 
 interface MessagePillProps {
   message: string
-  sender: 'user' | 'assistant'
+  sender: Sender
 }
 
 const MessagePill: React.FC<MessagePillProps> = ({ message, sender }) => {

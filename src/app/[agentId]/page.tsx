@@ -45,10 +45,10 @@ export default function Home() {
         <div className='relative flex flex-col flex-1 h-full min-w-0 gap-5 overflow-hidden bg-background pt-4'>
           <Messages sendMessage={sendMessage} messages={messages} status={status}/>
           <MessageComposer
-            sendMessage={handleSubmit}
-            isSendingMessage={isPending}
+            handleSubmit={handleSubmit}
             handleInputChange={handleInputChange}
             input={input}
+            status={status}
           />
           {/*{messages.map(message => (*/}
           {/*  <div key={message.id}>*/}
