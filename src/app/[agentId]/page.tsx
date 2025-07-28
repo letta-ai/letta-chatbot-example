@@ -10,18 +10,20 @@ import { useChat, useCompletion } from '@ai-sdk/react';
 import { useAgentMessages } from '@/components/hooks/use-agent-messages'
 import {lettaCloud, convertToAiSdkMessage} from '@letta-ai/vercel-ai-sdk-provider'
 
-export default function Home() {
+export default function Home({ params }: { params: { agentId: string } }) {
+  const agentId = params.agentId
+
   const { isOpen } = useAgentDetails()
   const isMobile = useIsMobile()
 
   const { isPending, mutate: sendMessage } = useSendMessage()
 
-  const { data: agentMessages, isLoading: agentMessagesIsLoading } = useAgentMessages('agent-338196a3-3a09-4766-bc09-ce56e5cc4cbd')
+  const { data: agentMessages, isLoading: agentMessagesIsLoading } = useAgentMessages(agentId)
   console.log(agentMessages)
 
   const { messages, input, handleInputChange, handleSubmit, error, reload, stop, status } = useChat({
     body: {
-      agentId: 'agent-338196a3-3a09-4766-bc09-ce56e5cc4cbd'
+      agentId: agentId
     },
     initialMessages: agentMessages,
     streamProtocol: 'data',

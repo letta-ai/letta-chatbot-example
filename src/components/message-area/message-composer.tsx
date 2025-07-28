@@ -3,12 +3,13 @@
 import { Button } from '@/components/ui/button'
 import { useEffect, useRef } from 'react'
 import { ArrowUpIcon } from 'lucide-react'
+import type { UseChatHelpers } from '@ai-sdk/react'
 
 interface MessageComposerProps {
-  handleSubmit: any
-  handleInputChange: any
-  input: any
-  status: any
+  handleSubmit: UseChatHelpers['handleSubmit']
+  handleInputChange: UseChatHelpers['handleInputChange']
+  input: UseChatHelpers['input']
+  status: UseChatHelpers['status']
 }
 
 export function MessageComposer(props: MessageComposerProps) {

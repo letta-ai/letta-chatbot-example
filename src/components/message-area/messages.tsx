@@ -1,13 +1,11 @@
 import { useEffect, useMemo, useRef } from 'react'
 import { MessagePill } from '@/components/ui/message'
-import { useAgentMessages } from '../hooks/use-agent-messages'
 import { Ellipsis, LoaderCircle } from 'lucide-react'
 import { MessagePopover } from './message-popover'
 import { DEFAULT_BOT_MESSAGE, ERROR_CONNECTING } from '@/app/lib/labels'
 import { useIsConnected } from '../hooks/use-is-connected'
 import { useAgents } from '../hooks/use-agents'
 import { UseSendMessageType } from '@/components/hooks/use-send-message'
-import { MESSAGE_TYPE } from '@/types'
 import { ReasoningMessageBlock } from '@/components/ui/reasoning-message'
 import { useReasoningMessage } from '@/components/toggle-reasoning-messages'
 import type { UseChatHelpers } from '@ai-sdk/react'
@@ -80,13 +78,13 @@ export const Messages = (props: MessagesProps) => {
               <MessagePopover sendMessage={sendMessage} key={messages[0].id} />
             ) : (
               <div className='flex min-w-0 flex-1 flex-col gap-6 pt-4'>
-                {messages.map((message: MessageType) => {
+                {messages.filter((message: MessageType) => message.role !== 'system').map((message: MessageType) => {
                   const reasoningPart = message.parts?.find((part) => part.type === 'reasoning')
                   if (reasoningPart) {
                     return (
                       <>
                       <ReasoningMessageBlock
-                        key={message.id + '_reasoning'}
+                        key={message.id + '_' + reasoningPart.type}
                         message={reasoningPart.reasoning}
                         isEnabled={isEnabled}
                       />

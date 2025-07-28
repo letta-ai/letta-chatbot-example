@@ -8,9 +8,9 @@ export async function validateAgentOwner(
   req: NextRequest,
   context: Context<{ agentId: string }>
 ) {
-  // const { agentId } = await context.params
+  const { agentId } = await context.params
 
-  const agentId = 'agent-338196a3-3a09-4766-bc09-ce56e5cc4cbd'
+  // const agentId = 'agent-338196a3-3a09-4766-bc09-ce56e5cc4cbd'
 
   if (!USE_COOKIE_BASED_AUTHENTICATION) {
     return {
