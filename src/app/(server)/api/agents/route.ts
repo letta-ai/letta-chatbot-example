@@ -12,7 +12,7 @@ async function getAgents(req: NextRequest) {
   try {
     const agents = await client.agents.list({
       tags: getUserTagId(userId),
-      matchAllTags: true
+      matchAllTags: true,
     })
     const sortedAgents = agents.sort((a, b) => {
       const dateA = a.updatedAt ? new Date(a.updatedAt).getTime() : 0

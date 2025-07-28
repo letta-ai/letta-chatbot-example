@@ -8,7 +8,6 @@ import { useIsMobile } from '@/components/hooks/use-mobile'
 import { useSendMessage } from '@/components/hooks/use-send-message'
 import { useChat, useCompletion } from '@ai-sdk/react';
 import { useAgentMessages } from '@/components/hooks/use-agent-messages'
-import {lettaCloud, convertToAiSdkMessage} from '@letta-ai/vercel-ai-sdk-provider'
 
 export default function Home({ params }: { params: { agentId: string } }) {
   const agentId = params.agentId
