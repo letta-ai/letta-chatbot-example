@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { ArrowUpIcon } from 'lucide-react'
 
 interface MessageComposerProps {
@@ -15,6 +15,16 @@ export function MessageComposer(props: MessageComposerProps) {
   const { handleSubmit, handleInputChange, input, status } = props
 
   const parentRef = useRef<HTMLDivElement>(null)
+  const textAreaRef = useRef<HTMLTextAreaElement>(null)
+
+
+  useEffect(() => { // Adjust the height of the textarea based on its content
+    const textarea = textAreaRef.current;
+    if (textarea) {
+      textarea.style.height = 'auto';
+      textarea.style.height = textarea.scrollHeight > 500 ? '500px' : textarea.scrollHeight + 'px';
+    }
+  }, [input]);
 
   return (
     <div className='flex min-w-0 flex-col justify-end'>
@@ -27,10 +37,11 @@ export function MessageComposer(props: MessageComposerProps) {
           <form onSubmit={handleSubmit}>
             <textarea
               name='message'
+              ref={textAreaRef}
               value={input}
               onChange={handleInputChange}
               className={
-                'appearance-none focus:outline-none focus:ring-0 focus:border-transparent flex w-full min-h-20 resize-none overflow-hidden border-none bg-transparent text-base shadow-none ring-0 placeholder:text-muted-foreground hover:border-none md:text-sm'
+                'appearance-none focus:outline-none focus:ring-0 focus:border-transparent flex w-full min-h-20 resize-none border-none bg-transparent text-base shadow-none ring-0 placeholder:text-muted-foreground hover:border-none md:text-sm'
               }
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {

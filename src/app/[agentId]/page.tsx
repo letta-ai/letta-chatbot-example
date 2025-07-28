@@ -50,26 +50,6 @@ export default function Home() {
             input={input}
             status={status}
           />
-          {/*{messages.map(message => (*/}
-          {/*  <div key={message.id}>*/}
-          {/*    {message.role === 'user' ? 'User: ' : 'AI: '}*/}
-          {/*    {message.parts.map((part, i) => {*/}
-          {/*      switch (part.type) {*/}
-          {/*        case 'reasoning':*/}
-          {/*          return <div key={`${message.id}-${i}`}>{part.reasoning}</div>*/}
-          {/*        default:*/}
-          {/*          return null*/}
-          {/*      }*/}
-          {/*    })}*/}
-          {/*    {message.content}*/}
-          {/*  </div>*/}
-          {/*))}*/}
-
-          {/*<form onSubmit={handleSubmit}>*/}
-          {/*  <input name="prompt" value={input} onChange={handleInputChange} />*/}
-          {/*  <button type="submit">Submit</button>*/}
-          {/*</form>*/}
-
         </div>
       ) : null}
       <AgentDetailDisplay />
