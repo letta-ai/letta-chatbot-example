@@ -1,5 +1,4 @@
 'use client'
-import { Letta } from '@letta-ai/letta-client'
 import { useQuery } from '@tanstack/react-query'
 
 export const USE_AGENTS_KEY = ['agents']

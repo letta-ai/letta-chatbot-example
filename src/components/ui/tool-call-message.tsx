@@ -1,5 +1,4 @@
 import * as React from 'react'
-import { LeftBar } from './left-bar'
 import { Cogs } from '@/components/icons/cogs'
 
 interface ToolCallMessageProps {
