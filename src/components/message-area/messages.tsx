@@ -5,7 +5,6 @@ import { MessagePopover } from './message-popover'
 import { DEFAULT_BOT_MESSAGE, ERROR_CONNECTING } from '@/app/lib/labels'
 import { useIsConnected } from '../hooks/use-is-connected'
 import { useAgents } from '../hooks/use-agents'
-import { UseSendMessageType } from '@/components/hooks/use-send-message'
 import { ReasoningMessageBlock } from '@/components/ui/reasoning-message'
 import { useReasoningMessage } from '@/components/toggle-reasoning-messages'
 import type { UseChatHelpers } from '@ai-sdk/react'
@@ -13,20 +12,18 @@ import { Message as MessageType } from '@ai-sdk/ui-utils'
 import { ToolCallMessageBlock } from '@/components/ui/tool-call-message'
 
 interface MessagesProps {
-  sendMessage: (options: UseSendMessageType) => void
   messages: any
   status: UseChatHelpers['status']
+  append: UseChatHelpers['append']
 }
 
 export const Messages = (props: MessagesProps) => {
-  const { sendMessage, messages, status } = props
+  const { messages, status, append } = props
   const { isEnabled } = useReasoningMessage()
   const { data: agents } = useAgents()
 
   const messagesListRef = useRef<HTMLDivElement>(null)
   const isConnected = useIsConnected()
-
-  const mounted = useRef(false)
 
   const isSendingMessage = status === 'submitted'
 
@@ -43,8 +40,7 @@ export const Messages = (props: MessagesProps) => {
     if (!messages) {
       return false
     }
-
-    return messages.length === 3 && messages[0].message === DEFAULT_BOT_MESSAGE
+    return messages.length === 2 && messages[0].parts[0].reasoning === DEFAULT_BOT_MESSAGE
   }, [messages])
 
 
@@ -54,7 +50,7 @@ export const Messages = (props: MessagesProps) => {
         <div className='flex h-full'>
           {messages ? (
             showPopover ? (
-              <MessagePopover sendMessage={sendMessage} key={messages[0].id} />
+              <MessagePopover key={messages[0].id} append={append}/>
             ) : (
               <div className='flex min-w-0 flex-1 flex-col gap-6 pt-4'>
 
