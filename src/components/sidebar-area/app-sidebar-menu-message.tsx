@@ -6,8 +6,6 @@ import { extractMessageText } from '@/lib/utils'
 export const MenuButtonMessage = ({ agentId }: { agentId: string }) => {
   const { data, isLoading } = useAgentMessages(agentId)
 
-  console.log('->>>', data)
-
   // Get the last message safely
   const lastMessage = data?.[data.length - 1]?.content
     ? extractMessageText(data[data.length - 1]?.content)

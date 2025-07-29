@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { useEffect, useRef } from 'react'
 import { ArrowUpIcon } from 'lucide-react'
 import type { UseChatHelpers } from '@ai-sdk/react'
+import { TEXTBOX_PLACEHOLDER } from '@/app/lib/labels'
 
 interface MessageComposerProps {
   handleSubmit: UseChatHelpers['handleSubmit']
@@ -40,6 +41,7 @@ export function MessageComposer(props: MessageComposerProps) {
               name='message'
               ref={textAreaRef}
               value={input}
+              placeholder={TEXTBOX_PLACEHOLDER}
               onChange={handleInputChange}
               className={
                 'appearance-none focus:outline-none focus:ring-0 focus:border-transparent flex w-full min-h-20 resize-none border-none bg-transparent text-base shadow-none ring-0 placeholder:text-muted-foreground hover:border-none md:text-sm'

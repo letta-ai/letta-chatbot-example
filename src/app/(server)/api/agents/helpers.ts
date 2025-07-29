@@ -10,8 +10,6 @@ export async function validateAgentOwner(
 ) {
   const { agentId } = await context.params
 
-  // const agentId = 'agent-338196a3-3a09-4766-bc09-ce56e5cc4cbd'
-
   if (!USE_COOKIE_BASED_AUTHENTICATION) {
     return {
       userId: 'default',

@@ -10,6 +10,7 @@ import { ReasoningMessageBlock } from '@/components/ui/reasoning-message'
 import { useReasoningMessage } from '@/components/toggle-reasoning-messages'
 import type { UseChatHelpers } from '@ai-sdk/react'
 import { Message as MessageType } from '@ai-sdk/ui-utils'
+import { ToolCallMessageBlock } from '@/components/ui/tool-call-message'
 
 interface MessagesProps {
   sendMessage: (options: UseSendMessageType) => void
@@ -29,36 +30,44 @@ export const Messages = (props: MessagesProps) => {
 
   const isSendingMessage = status === 'submitted'
 
+  const bottomRef = useRef<HTMLDivElement | null>(null);
 
-  useEffect(() => {
-    if (!messages) {
-      return
+  useEffect(() => { // scroll to the bottom on first render and when messages change
+    if (bottomRef.current) {
+      bottomRef.current.scrollIntoView({ behavior: 'smooth' });
     }
+  }, [messages]);
 
-    // scroll to the bottom on first render
-    if (messagesListRef.current && !mounted.current) {
-      messagesListRef.current.scrollTo(0, messagesListRef.current.scrollHeight)
-      mounted.current = true
-    }
-  }, [messages])
 
-  useEffect(() => {
-    if (messagesListRef.current) {
-      // only scroll to the bottom is user is 100px away from the bottom
-      const boundary = 100
-      const bottom =
-        messagesListRef.current.scrollHeight -
-        messagesListRef.current.clientHeight -
-        boundary
-
-      if (messagesListRef.current.scrollTop >= bottom || isSendingMessage) {
-        messagesListRef.current.scrollTo(
-          0,
-          messagesListRef.current.scrollHeight
-        )
-      }
-    }
-  }, [messages, isSendingMessage])
+  // useEffect(() => {
+  //   if (!messages) {
+  //     return
+  //   }
+  //
+  //   // scroll to the bottom on first render
+  //   if (messagesListRef.current && !mounted.current) {
+  //     messagesListRef.current.scrollTo(0, messagesListRef.current.scrollHeight)
+  //     mounted.current = true
+  //   }
+  // }, [messages])
+  //
+  // useEffect(() => {
+  //   if (messagesListRef.current) {
+  //     // only scroll to the bottom is user is 100px away from the bottom
+  //     const boundary = 100
+  //     const bottom =
+  //       messagesListRef.current.scrollHeight -
+  //       messagesListRef.current.clientHeight -
+  //       boundary
+  //
+  //     if (messagesListRef.current.scrollTop >= bottom || isSendingMessage) {
+  //       messagesListRef.current.scrollTo(
+  //         0,
+  //         messagesListRef.current.scrollHeight
+  //       )
+  //     }
+  //   }
+  // }, [messages, isSendingMessage])
 
   const showPopover = useMemo(() => {
     if (!messages) {
@@ -70,7 +79,7 @@ export const Messages = (props: MessagesProps) => {
 
 
   return (
-    <div ref={messagesListRef} className='flex-1 overflow-auto'>
+    <div ref={messagesListRef} className='flex-1 overflow-y-auto'>
       <div className='group/message mx-auto w-full max-w-3xl px-4 h-full'>
         <div className='flex h-full'>
           {messages ? (
@@ -78,38 +87,32 @@ export const Messages = (props: MessagesProps) => {
               <MessagePopover sendMessage={sendMessage} key={messages[0].id} />
             ) : (
               <div className='flex min-w-0 flex-1 flex-col gap-6 pt-4'>
-                {messages.filter((message: MessageType) => message.role !== 'system').map((message: MessageType) => {
+                {messages.map((message: MessageType) => {
                   const reasoningPart = message.parts?.find((part) => part.type === 'reasoning')
-                  if (reasoningPart) {
-                    return (
-                      <>
-                      <ReasoningMessageBlock
+                  const toolCallPart = message.parts?.find((part) => part.type === 'tool-invocation')
+                  return (
+                    <>
+                      {toolCallPart && <ToolCallMessageBlock message={toolCallPart.toolInvocation.toolName} isEnabled={isEnabled} />}
+                      {reasoningPart && <ReasoningMessageBlock
                         key={message.id + '_' + reasoningPart.type}
                         message={reasoningPart.reasoning}
                         isEnabled={isEnabled}
-                      />
-                      <MessagePill
-                        key={message.id}
-                        message={message.content}
-                        sender={message.role}
-                      />
-                      </>
-                    )
-                  } else {
-                    return (
-                      <MessagePill
-                        key={message.id}
-                        message={message.content}
-                        sender={message.role}
-                      />
-                    )
-                  }
+                      />}
+                      {message.content &&
+                        <MessagePill
+                          key={message.id}
+                          message={message.content}
+                          sender={message.role}
+                        />}
+                    </>
+                  )
                 })}
                 {isSendingMessage && (
                   <div className='flex justify-start'>
                     <Ellipsis size={24} className='animate-pulse' />
                   </div>
                 )}
+                <div ref={bottomRef} />
               </div>
             )
           ) : (

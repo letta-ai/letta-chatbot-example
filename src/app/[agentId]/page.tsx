@@ -8,22 +8,28 @@ import { useIsMobile } from '@/components/hooks/use-mobile'
 import { useSendMessage } from '@/components/hooks/use-send-message'
 import { useChat, useCompletion } from '@ai-sdk/react';
 import { useAgentMessages } from '@/components/hooks/use-agent-messages'
+import { useAgentIdParam } from '@/components/hooks/use-agentId-param'
 
-export default function Home({ params }: { params: { agentId: string } }) {
-  const agentId = params.agentId
+export default function Home() {
+  const agentId = useAgentIdParam()
 
   const { isOpen } = useAgentDetails()
   const isMobile = useIsMobile()
 
   const { isPending, mutate: sendMessage } = useSendMessage()
 
+  if (!agentId) {
+    return null
+  }
+
   const { data: agentMessages, isLoading: agentMessagesIsLoading } = useAgentMessages(agentId)
   console.log(agentMessages)
 
-  const { messages, input, handleInputChange, handleSubmit, error, reload, stop, status } = useChat({
+  const { messages, input, handleInputChange, handleSubmit, status } = useChat({
     body: {
       agentId: agentId
     },
+    api: `/api/agents/${agentId}/messages`,
     initialMessages: agentMessages,
     streamProtocol: 'data',
     onFinish: (message, { usage, finishReason }) => {
@@ -38,6 +44,8 @@ export default function Home({ params }: { params: { agentId: string } }) {
       console.log('Received HTTP response from server:', response);
     },
   });
+
+  // console.log('msg', messages.length, agentMessages.length)
 
 
   return (
