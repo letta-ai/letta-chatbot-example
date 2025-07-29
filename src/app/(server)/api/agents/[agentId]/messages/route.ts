@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import client from '@/config/letta-client'
 import { filterMessages } from './helpers'
-import { Letta } from '@letta-ai/letta-client'
 import { validateAgentOwner } from '../../helpers'
-import { Context, ROLE_TYPE } from '@/types'
-import { convertToAiSdkMessage, lettaCloud } from '@letta-ai/vercel-ai-sdk-provider'
+import { Context } from '@/types'
+import { convertToAiSdkMessage, createLetta } from '@letta-ai/vercel-ai-sdk-provider'
 import { streamText } from 'ai'
 
 async function getAgentMessages(
@@ -40,14 +39,15 @@ async function sendMessage(req: NextRequest, context: Context<{ agentId: string 
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  // const letta = createLetta({
-  //   baseUrl: process.env.LETTA_BASE_URL,
-  // })
+  const letta = createLetta({
+    token: process.env.LETTA_API_KEY,
+    baseUrl: process.env.LETTA_BASE_URL,
+  })
 
   const { messages } = await req.json()
 
   const result = streamText({
-    model: lettaCloud(agentId),
+    model: letta(agentId),
     messages
   });
 
