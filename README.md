@@ -49,7 +49,9 @@
 
   - The Letta TypeScript library provides convenient access to the Letta API.
 
-- [AI SDK]
+- [Vercel AI SDK](https://ai-sdk.dev/docs/introduction)
+- 
+  - The Vercel AI SDK is used to interact with the **Letta API**, allowing us to do things like send and receive messages, create and manage agents, and more.
 
 - [Next.js 15+](https://nextjs.org)
 
