@@ -1,22 +1,20 @@
 import React from 'react'
 import { Card, CardDescription, CardHeader } from '../ui/card'
 import { useIsMobile } from '@/hooks/use-mobile'
-import { UseSendMessageType } from '../hooks/use-send-message'
-import { useAgentContext } from '@/app/[agentId]/context/agent-context'
 import {
   MESSAGE_POPOVER_DESCRIPTION,
   suggestedChatActions
 } from '@/app/lib/labels'
 import Markdown from 'react-markdown'
+import { ROLE_TYPE } from '@/types'
 
 interface MessagePopoverProps {
-  sendMessage: (options: UseSendMessageType) => void
+  append: any
 }
 
 export const MessagePopover = (props: MessagePopoverProps) => {
   const isMobile = useIsMobile()
-  const { sendMessage } = props
-  const { agentId } = useAgentContext()
+  const { append } = props
 
   return (
     <div className='flex flex-col items-center h-full justify-between'>
@@ -34,9 +32,9 @@ export const MessagePopover = (props: MessagePopoverProps) => {
             <Card
               key={index}
               onClick={() => {
-                sendMessage({
-                  agentId: agentId,
-                  text: card.action
+                append({
+                  role: ROLE_TYPE.USER,
+                  content: card.action,
                 })
               }}
               className='cursor-pointer shadow-none hover:bg-accent transition-shadow duration-300'

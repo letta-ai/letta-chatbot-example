@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import client from '@/config/letta-client'
 import { filterMessages } from './helpers'
-import { Letta } from '@letta-ai/letta-client'
 import { validateAgentOwner } from '../../helpers'
-import { Context, ROLE_TYPE } from '@/types'
+import { Context } from '@/types'
+import { convertToAiSdkMessage, createLetta } from '@letta-ai/vercel-ai-sdk-provider'
+import { streamText } from 'ai'
 
 async function getAgentMessages(
   req: NextRequest,
@@ -16,12 +17,10 @@ async function getAgentMessages(
   const { agentId } = result
 
   try {
-    const messages = await client.agents.messages.list(agentId, {
-      limit: 100
-    })
+    const messages = await client.agents.messages.list(agentId, { limit: 100 })
 
-    const result = filterMessages(messages as Letta.LettaMessageUnion[])
-    return NextResponse.json(result)
+    const result = filterMessages(messages)
+    return NextResponse.json(convertToAiSdkMessage(result))
   } catch (error) {
     console.error('Error fetching messages:', error)
     return NextResponse.json(
@@ -31,56 +30,28 @@ async function getAgentMessages(
   }
 }
 
-async function sendMessage(
-  req: NextRequest,
-  context: Context<{ agentId: string }>
-) {
-  const { text } = await req.json()
+async function sendMessage(req: NextRequest, context: Context<{ agentId: string }>) {
+  const { agentId } = await context.params;
 
-  const result = await validateAgentOwner(req, context)
-  if (result instanceof NextResponse) {
-    console.error('Error:', result)
-    return result
+  const validate = await validateAgentOwner(req, context)
+  if (!('agentId' in validate)) {
+    console.error('Error:', validate)
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
-  const { agentId } = result
 
-  // set up eventstream
-  const encoder = new TextEncoder()
+  const letta = createLetta({
+    token: process.env.LETTA_API_KEY,
+    baseUrl: process.env.LETTA_BASE_URL,
+  })
 
-  return new NextResponse(
-    new ReadableStream({
-      async start(controller) {
-        const response = await client.agents.messages.createStream(agentId, {
-          streamTokens: true,
-          messages: [
-            {
-              role: ROLE_TYPE.USER,
-              content: text
-            }
-          ]
-        })
+  const { messages } = await req.json()
 
-        for await (const message of response) {
-          controller.enqueue(
-            encoder.encode(`data: ${JSON.stringify(message)}\n\n`)
-          )
-        }
+  const result = streamText({
+    model: letta(agentId),
+    messages
+  });
 
-        controller.close()
-        // Close connection on request close
-        req.signal.addEventListener('abort', () => {
-          controller.close()
-        })
-      }
-    }),
-    {
-      headers: {
-        'Content-Type': 'text/event-stream',
-        'Cache-Control': 'no-cache',
-        Connection: 'keep-alive'
-      }
-    }
-  )
+  return result.toDataStreamResponse({ sendReasoning: true })
 }
 
 export const GET = getAgentMessages

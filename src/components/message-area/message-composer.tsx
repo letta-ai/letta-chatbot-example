@@ -1,42 +1,32 @@
 'use client'
 
-import { useForm } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage
-} from '@/components/ui/form'
-import { Textarea } from '@/components/ui/textarea'
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { ArrowUpIcon } from 'lucide-react'
-import { useAgentContext } from '@/app/[agentId]/context/agent-context'
-import { UseSendMessageType } from '../hooks/use-send-message'
+import type { UseChatHelpers } from '@ai-sdk/react'
 import { TEXTBOX_PLACEHOLDER } from '@/app/lib/labels'
 
 interface MessageComposerProps {
-  sendMessage: (options: UseSendMessageType) => void
-  isSendingMessage: boolean
+  handleSubmit: UseChatHelpers['handleSubmit']
+  handleInputChange: UseChatHelpers['handleInputChange']
+  input: UseChatHelpers['input']
+  status: UseChatHelpers['status']
 }
 
 export function MessageComposer(props: MessageComposerProps) {
-  const { agentId } = useAgentContext()
-  const { sendMessage, isSendingMessage } = props
+  const { handleSubmit, handleInputChange, input, status } = props
 
   const parentRef = useRef<HTMLDivElement>(null)
+  const textAreaRef = useRef<HTMLTextAreaElement>(null)
 
-  const form = useForm({
-    defaultValues: { message: '' }
-  })
-  async function onSubmit(data: { message: string }) {
-    if (isSendingMessage) {
-      return
+
+  useEffect(() => { // Adjust the height of the textarea based on its content
+    const textarea = textAreaRef.current;
+    if (textarea) {
+      textarea.style.height = 'auto';
+      textarea.style.height = textarea.scrollHeight > 500 ? '500px' : textarea.scrollHeight + 'px';
     }
-    form.reset()
-    sendMessage({ agentId, text: data.message })
-  }
+  }, [input]);
 
   return (
     <div className='flex min-w-0 flex-col justify-end'>
@@ -46,41 +36,33 @@ export function MessageComposer(props: MessageComposerProps) {
           tabIndex={-1}
           className='block max-h-[calc(75dvh)] w-full flex-col rounded-md border border-input bg-muted px-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-ring disabled:cursor-not-allowed disabled:opacity-50'
         >
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}>
-              <FormField
-                control={form.control}
-                name='message'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Textarea
-                        className='!focus-visible:outline-none !focus-visible:ring-0 flex w-full resize-none overflow-hidden border-none bg-transparent text-base shadow-none ring-0 placeholder:text-muted-foreground hover:border-none focus:border-none focus:ring-0 md:text-sm'
-                        placeholder={TEXTBOX_PLACEHOLDER}
-                        {...field}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' && !e.shiftKey) {
-                            e.preventDefault()
-                            form.handleSubmit(onSubmit)()
-                          }
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <div className='flex justify-end'>
-                <Button
-                  type='submit'
-                  className='flex h-8 w-1 items-center justify-center rounded-full'
-                  disabled={isSendingMessage}
-                >
-                  <ArrowUpIcon width={14} height={16} />
-                </Button>
-              </div>
-            </form>
-          </Form>
+          <form onSubmit={handleSubmit}>
+            <textarea
+              name='message'
+              ref={textAreaRef}
+              value={input}
+              placeholder={TEXTBOX_PLACEHOLDER}
+              onChange={handleInputChange}
+              className={
+                'appearance-none focus:outline-none focus:ring-0 focus:border-transparent flex w-full min-h-20 resize-none border-none bg-transparent text-base shadow-none ring-0 placeholder:text-muted-foreground hover:border-none md:text-sm'
+              }
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSubmit(e);
+                }
+              }}
+            />
+            <div className='flex justify-end'>
+              <Button
+                type='submit'
+                className='flex h-8 w-1 items-center justify-center rounded-full'
+                disabled={status === 'submitted'}
+              >
+                <ArrowUpIcon width={14} height={16} />
+              </Button>
+            </div>
+          </form>
         </div>
       </div>
     </div>

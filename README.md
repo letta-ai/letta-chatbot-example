@@ -49,6 +49,10 @@
 
   - The Letta TypeScript library provides convenient access to the Letta API.
 
+- [Vercel AI SDK](https://ai-sdk.dev/docs/introduction)
+- 
+  - The Vercel AI SDK is used to interact with the **Letta API**, allowing us to do things like send and receive messages, create and manage agents, and more.
+
 - [Next.js 15+](https://nextjs.org)
 
   - We leverage Next.js for its **server-side rendering (SSR)** and other performance optimizations, ensuring a fast and seamless user experience.
@@ -118,7 +122,7 @@ npm run dev
 
 Environment variables can be controlled by setting them in your `.env` file or by setting them in your deployment environment.
 
-- `LETTA_API_KEY` - Your Letta access token, if not using cloud this is usually optiona.
+- `LETTA_API_KEY` - Your Letta access token, if not using cloud this is usually optional.
 - `LETTA_BASE_URL` - The URL of your Letta server. Default is `http://localhost:8283`.
 - `NEXT_PUBLIC_CREATE_AGENTS_FROM_UI` - If set to `true` will show a `+` button in the sidebar to create new agents from the `default-agents.json` file. Default is `true`.
 - `USE_COOKIE_BASED_AUTHENTICATION` - If set to `true` will use cookie-based sessions to emulate users. Default is `true`.

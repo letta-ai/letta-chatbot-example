@@ -7,8 +7,8 @@ export const MenuButtonMessage = ({ agentId }: { agentId: string }) => {
   const { data, isLoading } = useAgentMessages(agentId)
 
   // Get the last message safely
-  const lastMessage = data?.[data.length - 1]?.message
-    ? extractMessageText(data[data.length - 1]?.message)
+  const lastMessage = data?.[data.length - 1]?.content
+    ? extractMessageText(data[data.length - 1]?.content)
     : null
 
   if (isLoading) {

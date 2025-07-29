@@ -7,19 +7,6 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export const getMessageId = (
-  message: Letta.agents.LettaStreamingResponse
-): string => {
-  if (message.messageType === 'usage_statistics') {
-    return message.messageType
-  }
-  if ('id' in message) {
-    return message.messageType + message.id
-  }
-
-  return ''
-}
-
 export const extractMessageText = (message: AssistantMessageContent) => {
   if (typeof message === 'string') {
     return message
