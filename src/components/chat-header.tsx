@@ -16,7 +16,7 @@ export const ChatHeader: React.FC = () => {
 
     if (agentData.length === 0) return null
 
-    return agentData.find((a) => a.id === agentId)
+    return agentData.find((a: { id: string }) => a.id === agentId)
   }, [agentData, agentId])
 
   return (

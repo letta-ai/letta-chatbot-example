@@ -12,7 +12,7 @@ import { Message as MessageType } from '@ai-sdk/ui-utils'
 import { ToolCallMessageBlock } from '@/components/ui/tool-call-message'
 
 interface MessagesProps {
-  messages: any
+  messages: MessageType[]
   status: UseChatHelpers['status']
   append: UseChatHelpers['append']
 }
@@ -40,7 +40,15 @@ export const Messages = (props: MessagesProps) => {
     if (!messages) {
       return false
     }
-    return messages.length === 2 && messages[0].parts[0].reasoning === DEFAULT_BOT_MESSAGE
+
+    const firstReasoningPart = messages[0]?.parts?.find(
+      (part) => part.type === 'reasoning' && 'reasoning' in part
+    ) as { reasoning?: string } | undefined
+
+    return (
+      messages.length === 2 &&
+      firstReasoningPart?.reasoning === DEFAULT_BOT_MESSAGE
+    )
   }, [messages])
 
 
@@ -52,13 +60,13 @@ export const Messages = (props: MessagesProps) => {
             showPopover ? (
               <MessagePopover key={messages[0].id} append={append}/>
             ) : (
-              <div className='flex min-w-0 flex-1 flex-col gap-6 pt-4'>
+              <div className='flex min-w-0 flex-1 flex-col gap-6 pt-4' key='messages-list'>
 
                 {messages.map((message: MessageType) => {
                   const reasoningPart = message.parts?.find((part) => part.type === 'reasoning')
                   const toolCallPart = message.parts?.find((part) => part.type === 'tool-invocation')
                   return (
-                    <>
+                    <div key={message.id}>
                       {toolCallPart &&
                         <ToolCallMessageBlock
                         key={message.id + '_' + toolCallPart.type}
@@ -72,11 +80,11 @@ export const Messages = (props: MessagesProps) => {
                       />}
                       {message.content &&
                         <MessagePill
-                          key={message.id}
+                          key={message.id + '_' + message.role}
                           message={message.content}
                           sender={message.role}
                         />}
-                    </>
+                    </div>
                   )
                 })}
 

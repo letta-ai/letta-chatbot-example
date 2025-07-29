@@ -5,7 +5,7 @@ import { MessageComposer } from '@/components/message-area/message-composer'
 import { useAgentDetails } from '@/components/ui/agent-details'
 import { AgentDetailDisplay } from '@/components/agent-details/agent-details-display'
 import { useIsMobile } from '@/components/hooks/use-mobile'
-import { useChat, useCompletion } from '@ai-sdk/react';
+import { useChat } from '@ai-sdk/react';
 import { useAgentMessages } from '@/components/hooks/use-agent-messages'
 import { useAgentIdParam } from '@/components/hooks/use-agentId-param'
 
@@ -20,7 +20,6 @@ export default function Home() {
   }
 
   const { data: agentMessages, isLoading: agentMessagesIsLoading } = useAgentMessages(agentId)
-  console.log(agentMessages)
 
   const { messages, input, handleInputChange, handleSubmit, status, append } = useChat({
     body: {

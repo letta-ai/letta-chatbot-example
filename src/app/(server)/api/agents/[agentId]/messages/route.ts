@@ -20,7 +20,6 @@ async function getAgentMessages(
   try {
     const messages = await client.agents.messages.list(agentId, { limit: 100 })
 
-    // console.log('->', messages)
     const result = filterMessages(messages)
     return NextResponse.json(convertToAiSdkMessage(result))
   } catch (error) {
