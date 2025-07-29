@@ -39,36 +39,6 @@ export const Messages = (props: MessagesProps) => {
   }, [messages]);
 
 
-  // useEffect(() => {
-  //   if (!messages) {
-  //     return
-  //   }
-  //
-  //   // scroll to the bottom on first render
-  //   if (messagesListRef.current && !mounted.current) {
-  //     messagesListRef.current.scrollTo(0, messagesListRef.current.scrollHeight)
-  //     mounted.current = true
-  //   }
-  // }, [messages])
-  //
-  // useEffect(() => {
-  //   if (messagesListRef.current) {
-  //     // only scroll to the bottom is user is 100px away from the bottom
-  //     const boundary = 100
-  //     const bottom =
-  //       messagesListRef.current.scrollHeight -
-  //       messagesListRef.current.clientHeight -
-  //       boundary
-  //
-  //     if (messagesListRef.current.scrollTop >= bottom || isSendingMessage) {
-  //       messagesListRef.current.scrollTo(
-  //         0,
-  //         messagesListRef.current.scrollHeight
-  //       )
-  //     }
-  //   }
-  // }, [messages, isSendingMessage])
-
   const showPopover = useMemo(() => {
     if (!messages) {
       return false
@@ -87,13 +57,19 @@ export const Messages = (props: MessagesProps) => {
               <MessagePopover sendMessage={sendMessage} key={messages[0].id} />
             ) : (
               <div className='flex min-w-0 flex-1 flex-col gap-6 pt-4'>
+
                 {messages.map((message: MessageType) => {
                   const reasoningPart = message.parts?.find((part) => part.type === 'reasoning')
                   const toolCallPart = message.parts?.find((part) => part.type === 'tool-invocation')
                   return (
                     <>
-                      {toolCallPart && <ToolCallMessageBlock message={toolCallPart.toolInvocation.toolName} isEnabled={isEnabled} />}
-                      {reasoningPart && <ReasoningMessageBlock
+                      {toolCallPart &&
+                        <ToolCallMessageBlock
+                        key={message.id + '_' + toolCallPart.type}
+                        message={toolCallPart.toolInvocation.toolName}
+                        isEnabled={isEnabled} />}
+                      {reasoningPart &&
+                        <ReasoningMessageBlock
                         key={message.id + '_' + reasoningPart.type}
                         message={reasoningPart.reasoning}
                         isEnabled={isEnabled}
@@ -107,12 +83,15 @@ export const Messages = (props: MessagesProps) => {
                     </>
                   )
                 })}
+
                 {isSendingMessage && (
                   <div className='flex justify-start'>
                     <Ellipsis size={24} className='animate-pulse' />
                   </div>
                 )}
+
                 <div ref={bottomRef} />
+
               </div>
             )
           ) : (

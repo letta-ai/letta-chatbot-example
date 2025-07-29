@@ -45,20 +45,17 @@ export default function Home() {
     },
   });
 
-  // console.log('msg', messages.length, agentMessages.length)
-
-
   return (
     <div className='flex flex-row flex-1 h-0'>
       {!isMobile || (isMobile && !isOpen) ? (
         <div className='relative flex flex-col flex-1 h-full min-w-0 gap-5 overflow-hidden bg-background pt-4'>
           <Messages sendMessage={sendMessage} messages={messages} status={status}/>
-          <MessageComposer
+          {!agentMessagesIsLoading && <MessageComposer
             handleSubmit={handleSubmit}
             handleInputChange={handleInputChange}
             input={input}
             status={status}
-          />
+          />}
         </div>
       ) : null}
       <AgentDetailDisplay />
