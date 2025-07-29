@@ -27,18 +27,7 @@ export default function Home() {
     },
     api: `/api/agents/${agentId}/messages`,
     initialMessages: agentMessages,
-    streamProtocol: 'data',
-    onFinish: (message, { usage, finishReason }) => {
-      console.log('Finished streaming message:', message);
-      console.log('Token usage:', usage);
-      console.log('Finish reason:', finishReason);
-    },
-    onError: error => {
-      console.error('An error occurred:', error);
-    },
-    onResponse: response => {
-      console.log('Received HTTP response from server:', response);
-    },
+    streamProtocol: 'data'
   });
 
   return (
