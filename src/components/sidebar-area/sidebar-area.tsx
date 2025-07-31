@@ -155,6 +155,7 @@ export function SidebarArea({ canCreate }: SidebarAreaProps) {
       {data && data.length > 0 && <AppSidebar agents={data} />}
       {dialogType === DialogType.EditAgent && (
         <AgentDialog
+          data-id='edit-agent-dialog'
           title='Edit agent'
           content={<EditAgentForm agentId={agentId} />}
         />
