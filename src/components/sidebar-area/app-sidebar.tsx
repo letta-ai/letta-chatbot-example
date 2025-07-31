@@ -13,7 +13,7 @@ export function AppSidebar({ agents }: { agents: AgentState[] }) {
     <SidebarContent id='agents-list'>
       <SidebarGroup>
         <SidebarGroupContent>
-          <SidebarMenu className='cursor-pointer'>
+          <SidebarMenu className='cursor-pointer' data-id='agents-list'>
             {agents &&
               agents.map((agent) => (
                 <SidebarMenuItem key={agent.id}>

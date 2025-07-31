@@ -17,7 +17,7 @@ export const MessagePopover = (props: MessagePopoverProps) => {
   const { append } = props
 
   return (
-    <div className='flex flex-col items-center h-full justify-between'>
+    <div data-id='message-popover' className='flex flex-col items-center h-full justify-between'>
       <div className='flex top-component pt-20'>
         <div className='text-center'>
           <Markdown>{MESSAGE_POPOVER_DESCRIPTION}</Markdown>
@@ -30,6 +30,7 @@ export const MessagePopover = (props: MessagePopoverProps) => {
           .slice(0, isMobile ? 2 : suggestedChatActions.length)
           .map((card, index) => (
             <Card
+              data-id={`message-popover-card-${index}`}
               key={index}
               onClick={() => {
                 append({

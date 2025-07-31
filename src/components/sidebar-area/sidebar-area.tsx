@@ -132,7 +132,7 @@ export function SidebarArea({ canCreate }: SidebarAreaProps) {
             </TooltipTrigger>
           </Tooltip>
         </div>
-        <div className='flex justify-end p-2'>
+        <div data-id='create-agent-button' className='flex justify-end p-2'>
           {canCreate && (
             <Button
               disabled={isCreatingAgent || isLoading || !hostname}
@@ -155,6 +155,7 @@ export function SidebarArea({ canCreate }: SidebarAreaProps) {
       {data && data.length > 0 && <AppSidebar agents={data} />}
       {dialogType === DialogType.EditAgent && (
         <AgentDialog
+          data-id='edit-agent-dialog'
           title='Edit agent'
           content={<EditAgentForm agentId={agentId} />}
         />

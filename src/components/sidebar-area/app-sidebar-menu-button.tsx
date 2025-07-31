@@ -34,7 +34,10 @@ export const AppSidebarMenuButton: React.FC<{
               }
             }}
           >
-            <span className='block w-full truncate text-primary'>
+            <span
+              data-id={agent.id}
+              className='block w-full truncate text-primary'
+            >
               {agent.name}
             </span>
             <span className='block w-full truncate text-muted-foreground'>

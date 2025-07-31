@@ -7,7 +7,7 @@ import { ReasoningMessageSwitch } from './toggle-reasoning-messages'
 import { LoaderCircle } from 'lucide-react'
 import { useMemo } from 'react'
 
-export const ChatHeader: React.FC = () => {
+export const ChatHeader = () => {
   const { agentId } = useAgentContext()
   const { data: agentData, isLoading } = useAgents()
 
@@ -43,8 +43,8 @@ export const ChatHeader: React.FC = () => {
               />
             ) : (
               <div className='flex flex-row gap-1'>
-                <ReasoningMessageSwitch />
-                <AgentDetailsTrigger isLoading={isLoading} />
+                <ReasoningMessageSwitch data-id={'reasoning-message-switch'}/>
+                <AgentDetailsTrigger data-id={'agent-details-trigger'} isLoading={isLoading} />
               </div>
             )}
           </div>

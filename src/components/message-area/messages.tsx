@@ -51,6 +51,8 @@ export const Messages = (props: MessagesProps) => {
     )
   }, [messages])
 
+  console.log('messsages', messages)
+
 
   return (
     <div ref={messagesListRef} className='flex-1 overflow-y-auto'>
@@ -74,12 +76,14 @@ export const Messages = (props: MessagesProps) => {
                         isEnabled={isEnabled} />}
                       {reasoningPart &&
                         <ReasoningMessageBlock
-                        key={message.id + '_' + reasoningPart.type}
-                        message={reasoningPart.reasoning}
-                        isEnabled={isEnabled}
+                          data-id={message.id + '_' + reasoningPart.type}
+                          key={message.id + '_' + reasoningPart.type}
+                          message={reasoningPart.reasoning}
+                          isEnabled={isEnabled}
                       />}
                       {message.content &&
                         <MessagePill
+                          data-id={message.id + '_' + message.role}
                           key={message.id + '_' + message.role}
                           message={message.content}
                           sender={message.role}

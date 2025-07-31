@@ -36,7 +36,7 @@ export function MessageComposer(props: MessageComposerProps) {
           tabIndex={-1}
           className='block max-h-[calc(75dvh)] w-full flex-col rounded-md border border-input bg-muted px-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-ring disabled:cursor-not-allowed disabled:opacity-50'
         >
-          <form onSubmit={handleSubmit}>
+          <form data-id='message-input' onSubmit={handleSubmit}>
             <textarea
               name='message'
               ref={textAreaRef}
