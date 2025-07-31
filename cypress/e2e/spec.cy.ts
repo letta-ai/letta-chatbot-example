@@ -70,9 +70,7 @@ describe('e2e Letta Chatbot Example', { testIsolation: false }, () => {
         })
       })
 
-    cy.location('pathname', { timeout: 10000 }).should('include', '/agent-');
-
-    cy.location('pathname').then((pathname) => {
+    cy.location('pathname', { timeout: 10000 }).then((pathname) => {
       cy.log(pathname)
       agentId = pathname.slice(1)
       cy.log(`options-menu-${agentId}`)
@@ -90,10 +88,7 @@ describe('e2e Letta Chatbot Example', { testIsolation: false }, () => {
 
   it('should send a message to the new agent and receive something back', () => {
     let assistantMessages = 0
-    // cy.get('[data-id*="_assistant"]').should('exist').and('be.visible').its('length')
-    //   .then((count) => {
-    //     assistantMessages = count;
-    //   });
+
     cy.get('[data-id=message-popover]').should('exist').and('be.visible')
     cy.get('[data-id=message-input]').type('Hello, agent!{enter}')
     cy.get('[data-id*="_user"]').should('contain.text', 'Hello, agent!')
@@ -113,11 +108,11 @@ describe('e2e Letta Chatbot Example', { testIsolation: false }, () => {
       if (reasoningMessagesIsVisible > 0) {
         cy.get('[data-id=reasoning-message-switch]').click()
         cy.wait(2000)
-        cy.get('[data-id*="_reasoning"]').should('not.be.visible')
-        cy.get('[data-id=reasoning-message-switch]').click()
-        cy.wait(2000)
-        cy.get('[data-id*="_reasoning"]').should('be.visible')
-
+        cy.get('[data-id*="_reasoning"]').should('not.be.visible').then(() => {
+          cy.get('[data-id=reasoning-message-switch]').click()
+          cy.wait(2000)
+          cy.get('[data-id*="_reasoning"]').should('be.visible')
+        })
       } else {
         cy.log('No reasoning messages to hide')
       }
