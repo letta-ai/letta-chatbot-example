@@ -21,7 +21,7 @@ export function AgentDetailDisplay() {
 
 function AgentDetailDisplayContent() {
   return (
-    <div className='pt-2 px-6'>
+    <div data-id={'agent-details-display-content'} className='pt-2 px-6'>
       {[
         {
           title: 'CORE MEMORY',
