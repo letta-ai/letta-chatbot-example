@@ -17,11 +17,12 @@ const OptionsMenu: React.FC<{ agentId: string }> = ({ agentId }) => {
       <Tooltip>
         <TooltipTrigger asChild>
           <DropdownMenu>
-            <DropdownMenuTrigger>
+            <DropdownMenuTrigger data-id={`options-menu-${agentId}`}>
               <Ellipsis size={16} />
             </DropdownMenuTrigger>
             <DropdownMenuContent className='flex flex-col gap-1 p-3'>
               <DropdownMenuItem
+                data-id={`edit-agent-button-${agentId}`}
                 id={`edit-agent-${agentId}`}
                 onClick={() => {
                   setDialogType(DialogType.EditAgent)
@@ -31,7 +32,7 @@ const OptionsMenu: React.FC<{ agentId: string }> = ({ agentId }) => {
                 Edit Agent
               </DropdownMenuItem>
               <DropdownMenuItem
-                id={`delete-agent-${agentId}`}
+                data-id={`delete-agent-button-${agentId}`}
                 className='text-red-500 hover:text-red-500 focus:text-red-500'
                 onClick={() => {
                   setDialogType(DialogType.DeleteAgent)

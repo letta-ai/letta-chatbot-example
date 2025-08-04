@@ -79,7 +79,7 @@ const EditAgentForm: React.FC<{ agentId: string }> = ({ agentId }) => {
             <FormItem>
               <FormLabel>Name</FormLabel>
               <FormControl>
-                <Input placeholder='Enter a new agent name...' {...field} />
+                <Input data-id={'agent-name-input'} placeholder='Enter a new agent name...' {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -89,7 +89,7 @@ const EditAgentForm: React.FC<{ agentId: string }> = ({ agentId }) => {
           <Button variant='outline' onClick={() => closeAgentDialog()}>
             Cancel
           </Button>
-          <Button variant='default' type='submit'>
+          <Button data-id={'agent-name-input-save'} variant='default' type='submit'>
             Save
           </Button>
         </div>

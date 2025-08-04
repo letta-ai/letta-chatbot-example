@@ -11,7 +11,7 @@ const DeleteAgentConfirmation: React.FC<{
   const { data: agent } = useAgentState(agentId)
 
   return (
-    <div className='space-y-4'>
+    <div data-id={'delete-agent-confirmation'} className='space-y-4'>
       <span className='text-sm'>This will delete the agent</span>
       <span className='text-sm font-bold'> {agent?.name} </span>
       <span className='text-sm'>(this action cannot be undone)</span>
@@ -20,6 +20,7 @@ const DeleteAgentConfirmation: React.FC<{
           Cancel
         </Button>
         <Button
+          data-id={'delete-agent-confirmation-button'}
           variant='destructive'
           onClick={() => {
             handleDelete()

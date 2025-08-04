@@ -34,7 +34,7 @@ function useReasoningMessage() {
   return context
 }
 
-function ReasoningMessageSwitch() {
+function ReasoningMessageSwitch(props: React.ComponentProps<typeof Switch>) {
   const { isEnabled, setIsEnabled } = useReasoningMessage()
 
   return (
@@ -42,6 +42,7 @@ function ReasoningMessageSwitch() {
       <div className='flex items-center gap-2 text-xs'>
         <span className='font-bold'>REASONING MESSAGES</span>
         <Switch
+          {...props}
           id='show-reasoning-messages'
           checked={isEnabled}
           onCheckedChange={setIsEnabled}
