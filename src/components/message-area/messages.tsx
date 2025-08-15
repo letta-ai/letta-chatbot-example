@@ -27,14 +27,14 @@ export const Messages = (props: MessagesProps) => {
 
   const isSendingMessage = status === 'submitted'
 
-  const bottomRef = useRef<HTMLDivElement | null>(null);
+  const bottomRef = useRef<HTMLDivElement | null>(null)
 
-  useEffect(() => { // scroll to the bottom on first render and when messages change
+  useEffect(() => {
+    // scroll to the bottom on first render and when messages change
     if (bottomRef.current) {
-      bottomRef.current.scrollIntoView({ behavior: 'smooth' });
+      bottomRef.current.scrollIntoView({ behavior: 'smooth' })
     }
-  }, [messages]);
-
+  }, [messages])
 
   const showPopover = useMemo(() => {
     if (!messages) {
@@ -51,43 +51,50 @@ export const Messages = (props: MessagesProps) => {
     )
   }, [messages])
 
-  console.log('messsages', messages)
-
-
   return (
     <div ref={messagesListRef} className='flex-1 overflow-y-auto'>
       <div className='group/message mx-auto w-full max-w-3xl px-4 h-full'>
         <div className='flex h-full'>
           {messages ? (
             showPopover ? (
-              <MessagePopover key={messages[0].id} append={append}/>
+              <MessagePopover key={messages[0].id} append={append} />
             ) : (
-              <div className='flex min-w-0 flex-1 flex-col gap-6 pt-4' key='messages-list'>
-
+              <div
+                className='flex min-w-0 flex-1 flex-col gap-6 pt-4'
+                key='messages-list'
+              >
                 {messages.map((message: MessageType) => {
-                  const reasoningPart = message.parts?.find((part) => part.type === 'reasoning')
-                  const toolCallPart = message.parts?.find((part) => part.type === 'tool-invocation')
+                  const reasoningPart = message.parts?.find(
+                    (part) => part.type === 'reasoning'
+                  )
+                  const toolCallPart = message.parts?.find(
+                    (part) => part.type === 'tool-invocation'
+                  )
                   return (
                     <div key={message.id}>
-                      {toolCallPart &&
+                      {toolCallPart && (
                         <ToolCallMessageBlock
-                        key={message.id + '_' + toolCallPart.type}
-                        message={toolCallPart.toolInvocation.toolName}
-                        isEnabled={isEnabled} />}
-                      {reasoningPart &&
+                          key={message.id + '_' + toolCallPart.type}
+                          message={toolCallPart.toolInvocation.toolName}
+                          isEnabled={isEnabled}
+                        />
+                      )}
+                      {reasoningPart && (
                         <ReasoningMessageBlock
                           data-id={message.id + '_' + reasoningPart.type}
                           key={message.id + '_' + reasoningPart.type}
                           message={reasoningPart.reasoning}
                           isEnabled={isEnabled}
-                      />}
-                      {message.content &&
+                        />
+                      )}
+                      {message.content && (
                         <MessagePill
                           data-id={message.id + '_' + message.role}
                           key={message.id + '_' + message.role}
                           message={message.content}
                           sender={message.role}
-                        />}
+                        />
+                      )}
                     </div>
                   )
                 })}
@@ -99,12 +106,12 @@ export const Messages = (props: MessagesProps) => {
                 )}
 
                 <div ref={bottomRef} />
-
               </div>
             )
           ) : (
             <div className='flex min-w-0 flex-1 flex-col justify-center items-center h-full'>
-              {status === 'ready' || (isConnected && agents && agents.length === 0) ? (
+              {status === 'ready' ||
+              (isConnected && agents && agents.length === 0) ? (
                 <LoaderCircle className='animate-spin' size={32} />
               ) : (
                 ERROR_CONNECTING
