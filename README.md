@@ -9,9 +9,9 @@
 
 <div align="center">
 |
-  <a href="#-features">Features</a> · 
-  <a href="#-whats-included">What's included</a> · 
-  <a href="#%EF%B8%8F-quickstart">Quickstart</a> · 
+  <a href="#-features">Features</a> ·
+  <a href="#-whats-included">What's included</a> ·
+  <a href="#%EF%B8%8F-quickstart">Quickstart</a> ·
   <a href="#-running-the-app-locally">Running the app locally</a>
 |
 </div>
@@ -50,7 +50,7 @@
   - The Letta TypeScript library provides convenient access to the Letta API.
 
 - [Vercel AI SDK](https://ai-sdk.dev/docs/introduction)
-- 
+-
   - The Vercel AI SDK is used to interact with the **Letta API**, allowing us to do things like send and receive messages, create and manage agents, and more.
 
 - [Next.js 15+](https://nextjs.org)
@@ -108,9 +108,9 @@ npm install
 cp .env.template .env
 ```
 
-2️⃣ Update the `.env` file with your Letta server URL
+2️⃣ Update the `.env` file with your Letta configurations
 
-3️⃣ Update the default agents in the `default-agents.json` file
+3️⃣ Update the default memory block values in the `default-agents.json` file
 
 4️⃣ Run the app
 
