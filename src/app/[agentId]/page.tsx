@@ -48,7 +48,7 @@ export default function Home() {
       onError: (error) => {
         console.error('error', error)
         toast.error(
-          'Unable to send message. Please ensure your Letta server is running and double check your environment setup.'
+          'Unable to send message. Please double check your environment setup.'
         )
       },
       onFinish: () => {
