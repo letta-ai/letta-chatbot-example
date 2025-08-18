@@ -92,6 +92,8 @@ By default, the Letta server will run on `http://localhost:8283`.
 
 #### 🔸 Setup and run the app
 
+0️⃣ Have a [Letta Cloud](https://docs.letta.com/guides/cloud/overview) account or your local Letta server ready.
+
 1️⃣ Clone the repository and install dependencies:
 
 ```bash
