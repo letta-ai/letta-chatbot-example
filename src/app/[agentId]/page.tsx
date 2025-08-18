@@ -10,6 +10,7 @@ import { useAgentMessages } from '@/components/hooks/use-agent-messages'
 import { useAgentIdParam } from '@/components/hooks/use-agentId-param'
 import { toast } from 'sonner'
 import { Toaster } from '@/components/ui/sonner'
+import { useEffect } from 'react'
 
 export default function Home() {
   const agentId = useAgentIdParam()
@@ -21,13 +22,20 @@ export default function Home() {
     return null
   }
 
-  const { data: agentMessages, isLoading: agentMessagesIsLoading } =
-    useAgentMessages(agentId)
+  const {
+    data: agentMessages,
+    isLoading: agentMessagesIsLoading,
+    error: agentMessagesError
+  } = useAgentMessages(agentId)
 
   // Show toast when agent messages fail to load
-  if (agentMessages === undefined && !agentMessagesIsLoading) {
-    toast.error('Failed to load agent messages')
-  }
+  useEffect(() => {
+    if (agentMessagesError) {
+      toast.error(
+        'Failed to load agent messages. Please check your Letta server connection.'
+      )
+    }
+  }, [agentMessagesError])
 
   const { messages, input, handleInputChange, handleSubmit, status, append } =
     useChat({
