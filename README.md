@@ -112,7 +112,7 @@ cp .env.template .env
 
 2️⃣ Update the `.env` file with your Letta configurations
 
-3️⃣ Update the default memory block values in the `default-agents.json` file
+3️⃣ Update the default memory block values in the `default-agent.json` file
 
 4️⃣ Run the app
 
