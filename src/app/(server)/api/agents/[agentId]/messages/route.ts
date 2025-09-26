@@ -55,8 +55,10 @@ async function sendMessage(
   const result = streamText({
     model: letta(),
     providerOptions: {
-      agent: {
-        id: agentId
+      letta: {
+        agent: {
+          id: agentId
+        }
       }
     },
     messages: convertToModelMessages(messages)
