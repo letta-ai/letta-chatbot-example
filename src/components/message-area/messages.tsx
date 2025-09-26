@@ -8,24 +8,24 @@ import { useAgents } from '../hooks/use-agents'
 import { ReasoningMessageBlock } from '@/components/ui/reasoning-message'
 import { useReasoningMessage } from '@/components/toggle-reasoning-messages'
 import type { UseChatHelpers } from '@ai-sdk/react'
-import { Message as MessageType } from '@ai-sdk/ui-utils'
+import type { UIMessage } from 'ai'
 import { ToolCallMessageBlock } from '@/components/ui/tool-call-message'
 
 interface MessagesProps {
-  messages: MessageType[]
-  status: UseChatHelpers['status']
-  append: UseChatHelpers['append']
+  messages: UIMessage[]
+  status: 'submitted' | 'streaming' | 'ready' | 'error'
+  sendMessage: (message: { text: string }) => void
 }
 
 export const Messages = (props: MessagesProps) => {
-  const { messages, status, append } = props
+  const { messages, status, sendMessage } = props
   const { isEnabled } = useReasoningMessage()
   const { data: agents } = useAgents()
 
   const messagesListRef = useRef<HTMLDivElement>(null)
   const isConnected = useIsConnected()
 
-  const isSendingMessage = status === 'submitted'
+  const isSendingMessage = status === 'submitted' || status === 'streaming'
 
   const bottomRef = useRef<HTMLDivElement | null>(null)
 
@@ -57,44 +57,64 @@ export const Messages = (props: MessagesProps) => {
         <div className='flex h-full'>
           {messages ? (
             showPopover ? (
-              <MessagePopover key={messages[0].id} append={append} />
+              <MessagePopover key={messages[0].id} sendMessage={sendMessage} />
             ) : (
               <div
                 className='flex min-w-0 flex-1 flex-col gap-6 pt-4'
                 key='messages-list'
               >
-                {messages.map((message: MessageType) => {
+                {messages.map((message: UIMessage) => {
                   const reasoningPart = message.parts?.find(
                     (part) => part.type === 'reasoning'
                   )
-                  const toolCallPart = message.parts?.find(
-                    (part) => part.type === 'tool-invocation'
+                  const toolCallPart = message.parts?.find((part) =>
+                    part.type.includes('tool-')
                   )
+
                   return (
                     <div key={message.id}>
                       {toolCallPart && (
                         <ToolCallMessageBlock
                           key={message.id + '_' + toolCallPart.type}
-                          message={toolCallPart.toolInvocation.toolName}
+                          message={toolCallPart.type}
                           isEnabled={isEnabled}
                         />
                       )}
-                      {reasoningPart && (
+
+                      {reasoningPart && reasoningPart.type === 'reasoning' && (
                         <ReasoningMessageBlock
                           data-id={message.id + '_' + reasoningPart.type}
                           key={message.id + '_' + reasoningPart.type}
-                          message={reasoningPart.reasoning}
+                          message={reasoningPart.text}
                           isEnabled={isEnabled}
                         />
                       )}
-                      {message.content && (
-                        <MessagePill
-                          data-id={message.id + '_' + message.role}
-                          key={message.id + '_' + message.role}
-                          message={message.content}
-                          sender={message.role}
-                        />
-                      )}
+
+                      {message.parts?.map((part, partIndex) => {
+                        if (part.type === 'text') {
+                          return (
+                            <MessagePill
+                              data-id={
+                                message.id +
+                                '_' +
+                                message.role +
+                                '_' +
+                                partIndex
+                              }
+                              key={
+                                message.id +
+                                '_' +
+                                message.role +
+                                '_' +
+                                partIndex
+                              }
+                              message={part.text}
+                              sender={message.role}
+                            />
+                          )
+                        }
+                        return null
+                      })}
                     </div>
                   )
                 })}

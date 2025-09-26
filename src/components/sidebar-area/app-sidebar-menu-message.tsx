@@ -2,14 +2,14 @@ import { DEFAULT_BOT_MESSAGE, NO_MESSAGES_LABEL } from '@/app/lib/labels'
 import { useAgentMessages } from '@/components/hooks/use-agent-messages'
 import { SkeletonLoadBlock } from '@/components/ui/skeleton-load-block'
 import { extractMessageText } from '@/lib/utils'
+import { useMemo } from 'react'
 
 export const MenuButtonMessage = ({ agentId }: { agentId: string }) => {
   const { data, isLoading } = useAgentMessages(agentId)
 
-  // Get the last message safely
-  const lastMessage = data?.[data.length - 1]?.content
-    ? extractMessageText(data[data.length - 1]?.content)
-    : null
+  const lastMessage = useMemo(() => {
+    return data ? extractMessageText(data) : null
+  }, [data])
 
   if (isLoading) {
     return <SkeletonLoadBlock className='w-full h-[1.43em]' />

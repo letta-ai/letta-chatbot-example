@@ -9,15 +9,18 @@ import Markdown from 'react-markdown'
 import { ROLE_TYPE } from '@/types'
 
 interface MessagePopoverProps {
-  append: any
+  sendMessage: (message: { text: string }) => void
 }
 
 export const MessagePopover = (props: MessagePopoverProps) => {
   const isMobile = useIsMobile()
-  const { append } = props
+  const { sendMessage } = props
 
   return (
-    <div data-id='message-popover' className='flex flex-col items-center h-full justify-between'>
+    <div
+      data-id='message-popover'
+      className='flex flex-col items-center h-full justify-between'
+    >
       <div className='flex top-component pt-20'>
         <div className='text-center'>
           <Markdown>{MESSAGE_POPOVER_DESCRIPTION}</Markdown>
@@ -33,9 +36,8 @@ export const MessagePopover = (props: MessagePopoverProps) => {
               data-id={`message-popover-card-${index}`}
               key={index}
               onClick={() => {
-                append({
-                  role: ROLE_TYPE.USER,
-                  content: card.action,
+                sendMessage({
+                  text: card.action
                 })
               }}
               className='cursor-pointer shadow-none hover:bg-accent transition-shadow duration-300'

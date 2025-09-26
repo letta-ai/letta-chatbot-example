@@ -3,8 +3,11 @@ import client from '@/config/letta-client'
 import { filterMessages } from './helpers'
 import { validateAgentOwner } from '../../helpers'
 import { Context } from '@/types'
-import { convertToAiSdkMessage, createLetta } from '@letta-ai/vercel-ai-sdk-provider'
-import { streamText } from 'ai'
+import {
+  convertToAiSdkMessage,
+  createLetta
+} from '@letta-ai/vercel-ai-sdk-provider'
+import { streamText, convertToModelMessages } from 'ai'
 
 async function getAgentMessages(
   req: NextRequest,
@@ -30,8 +33,11 @@ async function getAgentMessages(
   }
 }
 
-async function sendMessage(req: NextRequest, context: Context<{ agentId: string }>) {
-  const { agentId } = await context.params;
+async function sendMessage(
+  req: NextRequest,
+  context: Context<{ agentId: string }>
+) {
+  const { agentId } = await context.params
 
   const validate = await validateAgentOwner(req, context)
   if (!('agentId' in validate)) {
@@ -41,17 +47,22 @@ async function sendMessage(req: NextRequest, context: Context<{ agentId: string 
 
   const letta = createLetta({
     token: process.env.LETTA_API_KEY,
-    baseUrl: process.env.LETTA_BASE_URL,
+    baseUrl: process.env.LETTA_BASE_URL
   })
 
   const { messages } = await req.json()
 
   const result = streamText({
-    model: letta(agentId),
-    messages
-  });
+    model: letta(),
+    providerOptions: {
+      agent: {
+        id: agentId
+      }
+    },
+    messages: convertToModelMessages(messages)
+  })
 
-  return result.toDataStreamResponse({ sendReasoning: true })
+  return result.toUIMessageStreamResponse()
 }
 
 export const GET = getAgentMessages
