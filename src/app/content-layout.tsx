@@ -3,6 +3,7 @@
 import { ChatHeader } from '@/components/chat-header'
 import { useAgents } from '@/components/hooks/use-agents'
 import { SidebarArea } from '@/components/sidebar-area/sidebar-area'
+import { ServerError } from '@/components/server-error'
 import { useEffect } from 'react'
 import { useAgentContext } from './[agentId]/context/agent-context'
 
@@ -11,7 +12,7 @@ export default function ContentLayout({
 }: {
   children: React.ReactNode
 }) {
-  const { data } = useAgents()
+  const { data, error, refetch } = useAgents()
   const { agentId, setAgentId } = useAgentContext()
 
   useEffect(() => {
@@ -29,7 +30,11 @@ export default function ContentLayout({
         <div className='flex border-b border-border p-2.5 gap-3 w-full'>
           <ChatHeader />
         </div>
-        {children}
+        {error ? (
+          <ServerError onRetry={() => refetch()} />
+        ) : (
+          children
+        )}
       </main>
     </>
   )
