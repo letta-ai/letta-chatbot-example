@@ -1,3 +1,6 @@
+> [!IMPORTANT]
+> This repo is deprecated - use the new [Letta OSS UI](https://github.com/letta-ai/letta-oss-ui) repo instead
+
 <a href="https://docs.letta.com/">
   <img alt="Stateful AI agent chatbot template built with Letta and Next.js." src="/assets/chatbot_template_header_2x.png">
   <h1 align="center">Letta Chatbot Template</h1>
